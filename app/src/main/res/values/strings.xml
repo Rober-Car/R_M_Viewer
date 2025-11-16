@@ -8,4 +8,12 @@
     <string name="logo_de_registro">logo de registro</string>
     <string name="nombre">Nombre</string>
     <string name="volver_a_login">Volver a login</string>
+
+    <string name="error_nombre_required">Introduce un nombre</string>
+    <string name="error_nombre_format">Nombre no válido (solo letras, mínimo 2)</string>
+    <string name="error_email_required">Introduce un email</string>
+    <string name="error_email_format">Email no válido</string>
+    <string name="error_password_required">Introduce una contraseña</string>
+    <string name="error_password_length">La contraseña debe tener al menos 6 caracteres</string>
+    <string name="error_fix_fields">Corrige los campos marcados</string>
 </resources>

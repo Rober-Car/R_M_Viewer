@@ -26,7 +26,8 @@
             android:layout_height="wrap_content"
             android:hint="@string/email"
             android:inputType="textEmailAddress"
-            android:layout_marginTop="20dp"/>
+            android:layout_marginTop="20dp"
+            android:imeOptions="actionNext"/>
 
         <EditText
             android:id="@+id/edt_password_login"
@@ -34,7 +35,8 @@
             android:layout_height="wrap_content"
             android:hint="@string/contrasena"
             android:inputType="textPassword"
-            android:layout_marginTop="20dp"/>
+            android:layout_marginTop="20dp"
+            android:imeOptions="actionDone"/>
 
         <Button
             android:id="@+id/btn_login"

@@ -26,11 +26,23 @@ class LoginActivity : AppCompatActivity() {
 
 		}
 
-		ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+		ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
 			val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 			v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
 			insets
 		}
+
+	}
+
+
+	// =================== VALDIAR DATOS ===================
+
+
+
+// fucnion que valida si los datos estan en la base de datos, deberia validar primero si estan bien escritos?
+	private fun validarLogin(){
+		val email = binding.edtEmailLogin.text.toString()
+		val password = binding.edtPasswordLogin.text.toString()
 
 	}
 }

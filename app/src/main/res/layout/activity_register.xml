@@ -18,7 +18,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="30dp"
             android:contentDescription="@string/logo_de_registro"
-            android:src="@drawable/logo_registo" />
+            android:src="@drawable/logo_registro" />
 
         <EditText
             android:id="@+id/edt_nombre_registro"
@@ -34,15 +34,17 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:hint="@string/email"
-            android:inputType="textEmailAddress" />
+            android:inputType="textEmailAddress"
+            android:imeOptions="actionNext"/>
 
         <EditText
-            android:id="@+id/edt_contraseña_registro"
+            android:id="@+id/edt_password_registro"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:hint="@string/contrasena"
-            android:inputType="" />
+            android:inputType="textPassword"
+            android:imeOptions="actionDone"/>
 
         <Button
             android:id="@+id/btn_registro"
