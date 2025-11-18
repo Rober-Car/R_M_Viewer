@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 
 
-class episodiosFragment : Fragment() {
+class EpisodiosFragment : Fragment() {
 
 
     override fun onCreateView(

@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 
 
-class detallesFrament : Fragment() {
+class DetallesFragment : Fragment() {
 
 
     override fun onCreateView(
