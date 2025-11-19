@@ -32,18 +32,18 @@ false (attachToRoot): Esto es crucial. Le dice a Android: "Crea la vista usando 
 *  del contenedor, pero NO la agregues al contenedor todavía"
         * */
 
-        binding= FragmentEpisodiosBinding.inflate(inflater, container, false)
+        binding = FragmentEpisodiosBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.episodiosRecyclerview.layoutManager= LinearLayoutManager(requireContext())
+        binding.episodiosRecyclerview.layoutManager = LinearLayoutManager(requireContext())
 
-        //adaptador qeu une el componente grafico con las clases kt,
+        //adaptador que une el componente grafico con las clases kt,
 
-        binding.episodiosRecyclerview.adapter =
+        binding.episodiosRecyclerview.adapter = AdatadorEpisodios()
 
 
     }
