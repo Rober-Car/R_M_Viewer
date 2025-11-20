@@ -9,10 +9,10 @@ import com.example.rmviewer.databinding.EpisodioItemBinding
 // Recibe dos cosas:
 // 1. La comida (listaEpisodios).
 // 2. Las instrucciones de qué hacer si el cliente toca un plato (onClick).
-class AdatadorEpisodios(
+class AdaptadorEpisodios(
     private val listaEpisodios: List<Episodio>,
     private val onClick: (Episodio) -> Unit
-) : RecyclerView.Adapter<AdatadorEpisodios.MyViewHolder>() {
+) : RecyclerView.Adapter<AdaptadorEpisodios.MyViewHolder>() {
 
     // CLASE VIEWHOLDER: Es la "bandeja" o "cajita".
     // Guarda las referencias al diseño (binding) para no tener que buscarlas todo el tiempo.
@@ -46,7 +46,7 @@ class AdatadorEpisodios(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): AdatadorEpisodios.MyViewHolder {
+    ): AdaptadorEpisodios.MyViewHolder {
         val binding =
             EpisodioItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MyViewHolder(binding)

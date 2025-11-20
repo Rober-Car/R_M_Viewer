@@ -43,6 +43,10 @@ android {
 dependencies {
 	implementation("androidx.navigation:navigation-fragment-ktx:2.9.6")
 	implementation("androidx.navigation:navigation-ui-ktx:2.9.5")
+	// Retrofit principal
+	implementation("com.squareup.retrofit2:retrofit:2.9.0")
+	// Convertidor Gson para JSON
+	implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 	implementation(libs.androidx.core.ktx)
 	implementation(libs.androidx.appcompat)
 	implementation(libs.material)

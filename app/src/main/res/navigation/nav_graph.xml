@@ -8,11 +8,16 @@
     <fragment
         android:id="@+id/episodiosFragment"
         android:name="com.example.rmviewer.EpisodiosFragment"
-        android:label="fragment_episodios"
+        android:label="Episodios"
         tools:layout="@layout/fragment_episodios" />
+
     <fragment
-        android:id="@+id/detallesFrament"
+        android:id="@+id/detallesFragment"
         android:name="com.example.rmviewer.DetallesFragment"
-        android:label="fragment_detalles"
-        tools:layout="@layout/fragment_detalles" />
+        android:label="Detalle"
+        tools:layout="@layout/fragment_detalles">
+
+    </fragment>
+
+
 </navigation>
