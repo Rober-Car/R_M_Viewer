@@ -1,13 +1,16 @@
 package com.example.rmviewer
 
+import ApiService
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast // Necesario para el mensaje emergente que aparece al hacer click
+import androidx.appcompat.view.ActionMode.Callback
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rmviewer.databinding.FragmentEpisodiosBinding
+import model.EpisodiosResponse
 import network.ApiService
 import network.RetrofitClient
 
@@ -47,7 +50,7 @@ class EpisodiosFragment : Fragment() {
 
 
         // 2. Inicializo el adaptador.
-        adaptador = AdaptadorEpisodios(listaEpisodios) { episodio ->
+        adaptador = AdaptadorEpisodios() { episodio ->
 
             // Este bloque de código `{}` es el "listener".
             // Se ejecuta CADA VEZ que alguien hace click en un elemento de la lista.
@@ -57,7 +60,8 @@ class EpisodiosFragment : Fragment() {
                 Toast.LENGTH_SHORT
             ).show()
         }
-
+        // 4. Conecto el adaptador a la lista (al RecyclerView).
+        binding.episodiosRecyclerview.adapter = adaptador
         // 3. RETROFIT: Pido la conexión y el servicio de la API.
 
         // Llamo al Singleton 'instance' que ya configuré antes (el motor de conexión).
@@ -67,9 +71,13 @@ class EpisodiosFragment : Fragment() {
         // Con 'apiService' ya puedo hacer llamadas como .getEpisodes().
         val apiService = retrofit.create(ApiService::class.java)
 
+        val call = apiService.getEpisodes(1)
 
-        // 4. Conecto el adaptador a la lista (al RecyclerView).
-        binding.episodiosRecyclerview.adapter = adaptador
+        call.enqueue(object : Callback<EpisodiosResponse> {
+
+        }
+
+
 
 
     }

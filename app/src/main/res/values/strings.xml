@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">R&amp;M Viewer</string>
+
+    <string name="navigation_drawer_open">Abrir cajón de navegación</string>
+    <string name="navigation_drawer_close">Cerrar cajón de navegación</string>
+
     <string name="email">Email</string>
     <string name="contrasena">Contraseña</string>
     <string name="iniciar_sesion">Iniciar sesión</string>

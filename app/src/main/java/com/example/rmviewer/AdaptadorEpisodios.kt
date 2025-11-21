@@ -5,68 +5,92 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rmviewer.databinding.EpisodioItemBinding
 
-// CLASE ADAPTADOR: Es el "camarero".
-// Recibe dos cosas:
-// 1. La comida (listaEpisodios).
-// 2. Las instrucciones de qué hacer si el cliente toca un plato (onClick).
+/**
+ * Adaptador para mostrar episodios en un RecyclerView.
+ * Recibe un callback 'onClick' para manejar clicks en cada item.
+ */
 class AdaptadorEpisodios(
-    private val listaEpisodios: List<Episodio>,
-    private val onClick: (Episodio) -> Unit
+    private val onClick: (Episodio) -> Unit   // Callback que se ejecuta al pulsar un episodio
 ) : RecyclerView.Adapter<AdaptadorEpisodios.MyViewHolder>() {
 
-    // CLASE VIEWHOLDER: Es la "bandeja" o "cajita".
-    // Guarda las referencias al diseño (binding) para no tener que buscarlas todo el tiempo.
-    // 'inner' significa que esta clase puede ver las variables de la clase padre (AdatadorEpisodios).
+    // --------------------------------------------------------
+    // BLOQUE 1: LISTA DE DATOS INTERNA
+    // --------------------------------------------------------
+    // Usamos una lista mutable para poder actualizarla cuando lleguen datos de la API.
+    private val listaEpisodios = mutableListOf<Episodio>()
+
+
+    // --------------------------------------------------------
+    // BLOQUE 2: VIEW HOLDER (gestiona cada tarjeta/ítem del RecyclerView)
+    // --------------------------------------------------------
     inner class MyViewHolder(private val binding: EpisodioItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        // FUNCION BIN (BIND): El momento de "servir".
-        // Coge los datos de un episodio y rellena los huecos del XML.
-        fun bin(episodio: Episodio) {
-            // 1. Ponemos el texto
+        /**
+         * Une un objeto Episodio al layout (item del RecyclerView).
+         */
+        fun bind(episodio: Episodio) {
+
+            // Muestra el nombre del episodio
             binding.nombreEpisodio.text = episodio.name
 
-            // 2. Lógica simple para cambiar la imagen según el nombre
+            // --------------------------------------------------------
+            // BLOQUE 2.1: LÓGICA PARA ASIGNAR IMAGEN SEGÚN EL NOMBRE
+            // --------------------------------------------------------
             when (episodio.name) {
                 "Episodio 1" -> binding.imagenItem.setImageResource(R.drawable.hommer)
                 "Episodio 2" -> binding.imagenItem.setImageResource(R.drawable.fantasma)
+                else -> binding.imagenItem.setImageResource(R.drawable.fantasma)
             }
 
-            // 3. EL CLICK:
-            // 'root' es toda la tarjeta/fila.
-            // Al tocarla, ejecutamos la función 'onClick' enviando este episodio concreto.
+            // --------------------------------------------------------
+            // BLOQUE 2.2: CLICK EN EL ITEM
+            // --------------------------------------------------------
             binding.root.setOnClickListener {
-                onClick(episodio)
+                onClick(episodio)     // Ejecuta el callback que recibimos en el constructor
             }
         }
     }
 
-    // ON CREATE VIEW HOLDER: Se ejecuta al principio solo unas pocas veces.
-    // "Infla" (crea) el diseño XML de UN solo ítem (la tarjeta vacía) y lo mete en el ViewHolder.
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): AdaptadorEpisodios.MyViewHolder {
-        val binding =
-            EpisodioItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+
+    // --------------------------------------------------------
+    // BLOQUE 3: CREACIÓN DEL VIEW HOLDER
+    // --------------------------------------------------------
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+        // Inflamos el layout XML del item
+        val binding = EpisodioItemBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
         return MyViewHolder(binding)
     }
 
 
-    // ON BIND VIEW HOLDER: Se ejecuta CONSTANTEMENTE al hacer scroll.
-    // "Recicla" la vista. Llama a nuestra función 'bin' para pintar los datos nuevos
-    // en una tarjeta que se acaba de volver visible.
-    override fun onBindViewHolder(
-        holder: MyViewHolder,
-        position: Int
-    ) {
-        holder.bin(listaEpisodios[position])
+    // --------------------------------------------------------
+    // BLOQUE 4: ASIGNACIÓN DE DATOS A CADA ITEM
+    // --------------------------------------------------------
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        holder.bind(listaEpisodios[position])
     }
 
 
-    // GET ITEM COUNT: Información básica.
-    // Le dice al sistema cuántos elementos hay en total para calcular el tamaño de la barra de scroll.
-    override fun getItemCount(): Int {
-        return listaEpisodios.size
+    // --------------------------------------------------------
+    // BLOQUE 5: TAMAÑO TOTAL DE ITEMS
+    // --------------------------------------------------------
+    override fun getItemCount(): Int = listaEpisodios.size
+
+
+    // --------------------------------------------------------
+    // BLOQUE 6: MÉTODO PARA ACTUALIZAR LOS DATOS DEL ADAPTADOR
+    // --------------------------------------------------------
+    /**
+     * Sustituye el contenido del adaptador por una nueva lista.
+     * Se llama desde el Fragment cuando llega la respuesta de Retrofit.
+     */
+    fun setData(newList: List<Episodio>) {
+        listaEpisodios.clear()         // Borra los episodios actuales
+        listaEpisodios.addAll(newList) // Añade los nuevos
+        notifyDataSetChanged()         // Actualiza la vista para ver los cambios
     }
 }

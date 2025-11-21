@@ -1,30 +1,30 @@
-package network
-
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 import model.EpisodiosResponse
 
-
-// 1. Definimos una 'interface'.
-// En Retrofit, no escribimos el código de conexión nosotros, solo definimos
-// las "reglas" (el contrato) y la librería se encarga de hacer el trabajo sucio.
+// Esta interfaz define el "contrato" de comunicación con la API.
+// Retrofit se encargará de generar automáticamente la implementación real.
+// Tú solo declaras qué endpoint quieres llamar y qué tipo de datos esperas.
 interface ApiService {
 
-	// 2. La anotación @GET
-	// Le dice a Retrofit que queremos RECUPERAR datos (no enviar ni borrar).
-	// "episode" es el 'endpoint' o ruta final. Si tu web es "rickandmortyapi.com/api/",
-	// esto completará la URL a: "rickandmortyapi.com/api/episode"
+	// @GET("episode") indica que esta función hará una petición HTTP GET.
+	// "episode" es la ruta final del endpoint. Si la base es "https://rickandmortyapi.com/api/",
+	// la URL completa será: "https://rickandmortyapi.com/api/episode".
 	@GET("episode")
 	fun getEpisodes(
-		// 3. La anotación @Query
-		// Esto agrega parámetros de filtro a la URL automáticamente.
-		// Al poner "page", la URL final quedará así: .../episode?page=1
-		// 'page: Int = 1' significa que si no le pasamos un número, usará el 1 por defecto.
+		// @Query("page") añade un parámetro dinámico a la URL.
+		// Ejemplo: si llamas a getEpisodes(2), la URL será:
+		// https://rickandmortyapi.com/api/episode?page=2
+		//
+		// El valor por defecto es 1, así que si no pasas nada,
+		// Retrofit usará automáticamente la página 1:
+		// https://rickandmortyapi.com/api/episode?page=1
 		@Query("page") page: Int = 1
 	): Call<EpisodiosResponse>
-	// 4. El tipo de retorno Call<...>
-	// 'Call' es como una caja o promesa. Significa: "Esta función no devuelve los datos
-	// inmediatamente (porque internet es lento), sino que devuelve una 'Llamada' que,
-	// cuando termine, contendrá un objeto de tipo EpisodiosResponse".
+	// El tipo de retorno es Call<EpisodiosResponse>.
+	// "Call" es un contenedor que representa la llamada pendiente.
+	// No devuelve los datos inmediatamente, porque la petición HTTP tarda.
+	// Cuando la llamada termine, podrás obtener un objeto EpisodiosResponse
+	// con los datos reales de la respuesta.
 }
