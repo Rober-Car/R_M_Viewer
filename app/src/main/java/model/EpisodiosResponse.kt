@@ -1,4 +1,5 @@
 package model
+import com.example.rmviewer.Episodio
 import model.Info
 import model.InfoEpisodio
 
@@ -10,5 +11,5 @@ data class EpisodiosResponse(
     // ¡OJO! Aquí va la lista de capítulos.
     // Importante: El tipo dentro de < > tiene que ser la clase que creé abajo (InfoEpisodio).
     // Antes ponía 'Episodio' y daba error porque esa clase no existía.
-    val results: List<InfoEpisodio>
+    val results: List<Episodio>
 )

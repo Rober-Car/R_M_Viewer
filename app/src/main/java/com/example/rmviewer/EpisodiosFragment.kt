@@ -1,84 +1,133 @@
 package com.example.rmviewer
 
-import ApiService
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast // Necesario para el mensaje emergente que aparece al hacer click
-import androidx.appcompat.view.ActionMode.Callback
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rmviewer.databinding.FragmentEpisodiosBinding
-import model.EpisodiosResponse
-import network.ApiService
-import network.RetrofitClient
 
+// Ajusta estos imports a tus packages reales:
+import com.example.rmviewer.Episodio
+import model.EpisodiosResponse
+import network.RetrofitClient
+import network.ApiService
+
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class EpisodiosFragment : Fragment() {
 
-    // 1. lateinit: Declaro la variable aquí, pero sé que la inicializaré después
-    // dentro de onCreateView. Esto es para tener acceso a los elementos del XML.
-    private lateinit var binding: FragmentEpisodiosBinding
+	private lateinit var binding: FragmentEpisodiosBinding
+	private lateinit var adaptador: AdaptadorEpisodios
+	private val listaEpisodios = mutableListOf<Episodio>()
 
-    // 2. El controlador de la lista. Se encarga de pintar cada fila.
-    private lateinit var adaptador: AdaptadorEpisodios
+	override fun onCreateView(
+		inflater: LayoutInflater, container: ViewGroup?,
+		savedInstanceState: Bundle?
+	): View {
+		binding = FragmentEpisodiosBinding.inflate(inflater, container, false)
+		return binding.root
+	}
 
-    // 3. La lista donde guardo los datos reales (los episodios que me da la API)
-    //Una colección mutable permite añadir, quitar o modificar elementos después de haber sido creada.
-    private val listaEpisodios = mutableListOf<Episodio>()
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // inflo el diseño (XML) para que el Fragment lo pueda mostrar.
-        binding = FragmentEpisodiosBinding.inflate(inflater, container, false)
-        return binding.root // Siempre devuelvo la vista raíz.
-    }
+		// ---------------------------
+		// CONFIGURACIÓN RECYCLER
+		// ---------------------------
+		binding.episodiosRecyclerview.layoutManager =
+			LinearLayoutManager(requireContext())
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+		adaptador = AdaptadorEpisodios { episodio ->
+			Toast.makeText(requireContext(), "Click en: ${episodio.name}", Toast.LENGTH_SHORT)
+				.show()
+		}
 
-        // **********************************************
-        // ESTO ES LO CLAVE: LA CONFIGURACIÓN DE LA LISTA
-        // **********************************************
+		// ----------------------------
+// BLOQUE: CONFIGURACIÓN INICIAL
+// ----------------------------
+		binding.episodiosRecyclerview.layoutManager =
+			LinearLayoutManager(requireContext())
 
-        // 1. Configuramos el LayoutManager. Le digo al RecyclerView que se comporte como una
-        // lista vertical (como el feed de Instagram, uno debajo de otro).
-        binding.episodiosRecyclerview.layoutManager = LinearLayoutManager(requireContext())
+// Creamos el adaptador solo con el listener (la lista interna la gestiona el adaptador)
+		adaptador = AdaptadorEpisodios { episodio ->
+			// ----------------------------
+			// BLOQUE: CLICK EN ITEM
+			// ----------------------------
+			Toast.makeText(
+				requireContext(),
+				"Click en: ${episodio.name}",
+				Toast.LENGTH_SHORT
+			).show()
+		}
 
-
-        // 2. Inicializo el adaptador.
-        adaptador = AdaptadorEpisodios() { episodio ->
-
-            // Este bloque de código `{}` es el "listener".
-            // Se ejecuta CADA VEZ que alguien hace click en un elemento de la lista.
-            Toast.makeText(
-                requireContext(),
-                "Click en: ${episodio.name}",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-        // 4. Conecto el adaptador a la lista (al RecyclerView).
-        binding.episodiosRecyclerview.adapter = adaptador
-        // 3. RETROFIT: Pido la conexión y el servicio de la API.
-
-        // Llamo al Singleton 'instance' que ya configuré antes (el motor de conexión).
-        val retrofit = RetrofitClient.instance
-
-        // Le pido a Retrofit que me dé la implementación de mi interfaz (el menú de la API).
-        // Con 'apiService' ya puedo hacer llamadas como .getEpisodes().
-        val apiService = retrofit.create(ApiService::class.java)
-
-        val call = apiService.getEpisodes(1)
-
-        call.enqueue(object : Callback<EpisodiosResponse> {
-
-        }
+// Conectamos el adaptador al RecyclerView (vacío inicialmente)
+		binding.episodiosRecyclerview.adapter = adaptador
 
 
 
+        // ----------------------------
+        // BLOQUE: PETICIÓN A LA API (RETROFIT)
+        // ----------------------------
+		val retrofit = RetrofitClient.instance
+		val apiService = retrofit.create(ApiService::class.java)
 
-    }
+        // Pedir página 1 de episodios
+		val call = apiService.getEpisodes(1)
+
+		call.enqueue(object : Callback<EpisodiosResponse> {
+
+			override fun onResponse(
+				call: Call<EpisodiosResponse>,
+				response: Response<EpisodiosResponse>
+			) {
+
+				// ----------------------------
+				// BLOQUE: RESPUESTA OK
+				// ----------------------------
+				if (response.isSuccessful && response.body() != null) {
+
+					val episodios = response.body()!!.results   // List<Episodio>
+
+					// ----------------------------
+					// BLOQUE: ACTUALIZAR LISTA LOCAL (opcional)
+					// ----------------------------
+					listaEpisodios.clear()
+					listaEpisodios.addAll(episodios)
+
+					// ----------------------------
+					// BLOQUE: ACTUALIZAR ADAPTADOR (REFRESCA UI)
+					// ----------------------------
+					adaptador.setData(episodios)
+
+				} else {
+
+					// ----------------------------
+					// BLOQUE: ERROR HTTP
+					// ----------------------------
+					Toast.makeText(
+						requireContext(),
+						"Error HTTP: ${response.code()}",
+						Toast.LENGTH_SHORT
+					).show()
+				}
+			}
+
+			override fun onFailure(call: Call<EpisodiosResponse>, t: Throwable) {
+
+				// ----------------------------
+				// BLOQUE: ERROR DE RED
+				// ----------------------------
+				Toast.makeText(
+					requireContext(),
+					"Fallo de red: ${t.message}",
+					Toast.LENGTH_LONG
+				).show()
+			}
+		})
+	}
 }

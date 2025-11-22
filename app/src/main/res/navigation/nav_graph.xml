@@ -13,11 +13,25 @@
 
     <fragment
         android:id="@+id/detallesFragment"
-        android:name="com.example.rmviewer.DetallesFragment"
+        android:name="com.example.rmviewer.EpisodiosFragment"
         android:label="Detalle"
-        tools:layout="@layout/fragment_detalles">
+        tools:layout="@layout/fragment_detalles"/>
 
-    </fragment>
+    <fragment
+        android:id="@+id/estadisticasFragment"
+        android:name="com.example.rmviewer.EstadisticasFragment"
+        android:label="fragment_estadisticas"
+        tools:layout="@layout/fragment_estadisticas" />
+    <fragment
+        android:id="@+id/ajustesFragment"
+        android:name="com.example.rmviewer.AjustesFragment"
+        android:label="fragment_ajustes"
+        tools:layout="@layout/fragment_ajustes" />
+    <fragment
+        android:id="@+id/acercaFragment"
+        android:name="com.example.rmviewer.AcercaFragment"
+        android:label="fragment_acerca"
+        tools:layout="@layout/fragment_acerca" />
 
 
 </navigation>
