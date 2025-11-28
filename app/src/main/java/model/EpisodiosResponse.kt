@@ -1,7 +1,4 @@
 package model
-import com.example.rmviewer.Episodio
-import model.Info
-import model.InfoEpisodio
 
 // Esta es la clase "padre". Representa TODO el JSON que recibo de golpe.
 data class EpisodiosResponse(

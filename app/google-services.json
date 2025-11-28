@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "946661729612",
+    "project_id": "tarea-3-rick--y-morty",
+    "storage_bucket": "tarea-3-rick--y-morty.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:946661729612:android:b07d7c51117da38a8e5be9",
+        "android_client_info": {
+          "package_name": "com.example.rmviewer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBV71hUo-X_IOaCDetpV1a3FJ1jOWicjcs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

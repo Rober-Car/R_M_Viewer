@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="32dp"
-        tools:context=".LoginActivity">
+        tools:context=".ui.activities.LoginActivity">
 
         <ImageView
             android:layout_width="180dp"

@@ -7,29 +7,29 @@
 
     <fragment
         android:id="@+id/episodiosFragment"
-        android:name="com.example.rmviewer.EpisodiosFragment"
+        android:name="com.example.rmviewer.ui.fragments.EpisodiosFragment"
         android:label="Episodios"
         tools:layout="@layout/fragment_episodios" />
 
     <fragment
         android:id="@+id/detallesFragment"
-        android:name="com.example.rmviewer.EpisodiosFragment"
+        android:name="com.example.rmviewer.ui.fragments.EpisodiosFragment"
         android:label="Detalle"
         tools:layout="@layout/fragment_detalles"/>
 
     <fragment
         android:id="@+id/estadisticasFragment"
-        android:name="com.example.rmviewer.EstadisticasFragment"
+        android:name="com.example.rmviewer.ui.fragments.EstadisticasFragment"
         android:label="fragment_estadisticas"
         tools:layout="@layout/fragment_estadisticas" />
     <fragment
         android:id="@+id/ajustesFragment"
-        android:name="com.example.rmviewer.AjustesFragment"
+        android:name="com.example.rmviewer.ui.fragments.AjustesFragment"
         android:label="fragment_ajustes"
         tools:layout="@layout/fragment_ajustes" />
     <fragment
         android:id="@+id/acercaFragment"
-        android:name="com.example.rmviewer.AcercaFragment"
+        android:name="com.example.rmviewer.ui.fragments.AcercaFragment"
         android:label="fragment_acerca"
         tools:layout="@layout/fragment_acerca" />
 

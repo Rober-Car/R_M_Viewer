@@ -1,6 +1,5 @@
-package com.example.rmviewer
+package com.example.rmviewer.ui.activities
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -8,6 +7,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.example.rmviewer.databinding.ActivityMainBinding
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
+import com.example.rmviewer.R
 
 class MainActivity : AppCompatActivity() {
 	private lateinit var binding: ActivityMainBinding
@@ -41,8 +41,8 @@ class MainActivity : AppCompatActivity() {
 			this,
 			drawerLayout,
 			toolbar,
-			R.string.navigation_drawer_open,
-			R.string.navigation_drawer_close
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
 		)
 
 		// 4. Asocia el Toggle al DrawerLayout para escuchar eventos y animar el icono.

@@ -1,4 +1,4 @@
-package com.example.rmviewer
+package com.example.rmviewer.ui.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,10 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.rmviewer.adapter.AdaptadorEpisodios
 import com.example.rmviewer.databinding.FragmentEpisodiosBinding
 
 // Ajusta estos imports a tus packages reales:
-import com.example.rmviewer.Episodio
+import model.Episodio
 import model.EpisodiosResponse
 import network.RetrofitClient
 import network.ApiService
