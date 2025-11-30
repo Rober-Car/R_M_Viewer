@@ -15,14 +15,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "946661729612-i73qnveis8k2pnejqukjis1399p6l5ik.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.rmviewer",
-            "certificate_hash": "400d8b4c650905266f21dc3c9032c77caed78622"
-          }
-        },
-        {
           "client_id": "946661729612-p5ut4d8bptdikcudvmsh4dl2u1clobcd.apps.googleusercontent.com",
           "client_type": 3
         }
