@@ -36,14 +36,8 @@ class AdaptadorEpisodios(
             // Muestra el nombre del episodio
             binding.nombreEpisodio.text = episodio.name
 
-            // --------------------------------------------------------
-            // BLOQUE 2.1: LÓGICA PARA ASIGNAR IMAGEN SEGÚN EL NOMBRE
-            // --------------------------------------------------------
-            when (episodio.name) {
-                "Episodio 1" -> binding.imagenItem.setImageResource(R.drawable.hommer)
-                "Episodio 2" -> binding.imagenItem.setImageResource(R.drawable.fantasma)
-                else -> binding.imagenItem.setImageResource(R.drawable.fantasma)
-            }
+
+
 
             // --------------------------------------------------------
             // BLOQUE 2.2: CLICK EN EL ITEM
