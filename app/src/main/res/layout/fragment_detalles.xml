@@ -1,14 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ui.fragments.DetallesFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="FRAGMENTO DETALLES" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/nombre_episodio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="nombre" />
+
+    <TextView
+        android:id="@+id/codigo_episodio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="codigo" />
+
+    <TextView
+        android:id="@+id/fecha_emision"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="fecha" />
+
+    <CheckBox
+        android:id="@+id/check_visto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="false" />
+
+</LinearLayout>

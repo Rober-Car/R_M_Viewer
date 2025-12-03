@@ -17,7 +17,7 @@
         android:padding="12dp">
 
         <TextView
-            android:id="@+id/nombre_episodio"
+            android:id="@+id/item_nombre_episodio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
@@ -38,7 +38,7 @@
                 android:checked="false" />
 
             <TextView
-                android:id="@+id/codigo_episodio"
+                android:id="@+id/item_codigo_episodio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -48,7 +48,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/fecha_episodio"
+                android:id="@+id/item_fecha_episodio"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
