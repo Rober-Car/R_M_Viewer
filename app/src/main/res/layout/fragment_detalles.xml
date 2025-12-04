@@ -4,31 +4,50 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:padding="32dp"
     tools:context=".ui.fragments.DetallesFragment">
 
 
     <TextView
         android:id="@+id/nombre_episodio"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="nombre" />
 
-    <TextView
-        android:id="@+id/codigo_episodio"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="codigo" />
+        android:orientation="horizontal"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/codigo_episodio"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="codigo" />
+
+        <TextView
+            android:id="@+id/fecha_emision"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="fecha" />
+
+        <CheckBox
+            android:id="@+id/check_visto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="Episodio visto"/>
+
+    </LinearLayout>
 
     <TextView
-        android:id="@+id/fecha_emision"
+        android:id="@+id/lista_personajes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="fecha" />
-
-    <CheckBox
-        android:id="@+id/check_visto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:checked="false" />
-
+        android:layout_marginTop="40dp"
+        android:text="Lista de personajes que aparecen en el episodio (proviene de las URLs de personajes incluidas en la respuesta del episodio):
+La lista de personajes puede mostrarse de forma simple (solo nombres) o de forma más elaborada (grid con imágenes y nombres)"/>
 </LinearLayout>

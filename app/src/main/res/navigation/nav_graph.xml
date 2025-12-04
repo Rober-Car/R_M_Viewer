@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/detallesFragment"
-        android:name="com.example.rmviewer.ui.fragments.EpisodiosFragment"
+        android:name="com.example.rmviewer.ui.fragments.DetallesFragment"
         android:label="Detalle"
         tools:layout="@layout/fragment_detalles"/>
 

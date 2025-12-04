@@ -25,25 +25,44 @@ class AdaptadorEpisodios(
     // --------------------------------------------------------
     // BLOQUE 2: VIEW HOLDER (gestiona cada tarjeta/ítem del RecyclerView)
     // --------------------------------------------------------
+    //class MyViewHolder → es una clase que define cómo se guarda y maneja la vista de un ítem.n
+    // es un contenedor de vistas que representa un ítem de la lista.
+    //inner class es una clase declarada dentro de otra clase.La palabra clave inner le da
+    // a esa clase interna acceso a las propiedades y métodos de la clase externa.
     inner class MyViewHolder(private val binding: EpisodioItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        /**
-         * Une un objeto Episodio al layout (item del RecyclerView).
-         */
+        //bind es una función personalizada se encarga de recibir un objeto de datos (como un Episodio,
+        // Post, etc.) Y rellenar las vistas del layout del ítem con esos datos.
         fun bind(episodio: Episodio) {
 
-            // Muestra el nombre del episodio
-            binding.nombreEpisodio.text = episodio.name
+            // Muestra los textos del item
+            binding.itemNombreEpisodio.text = episodio.name
+            binding.itemCodigoEpisodio.text = episodio.episode  //fecha
+            binding.itemFechaEpisodio.text = episodio.air_date //codigo
 
+            // --------------------------------------------------------
+            // CONTROL DE ICONO "VISTO"
+            // --------------------------------------------------------
 
+            //.visibility es una propiedad de cualquier View,controla cómo se muestra u oculta esa
+            // vista en la interfaz.
+
+            // Cambia la visibilidad de esa vista. Puede ser:
+            //View.VISIBLE → se muestra.
+            // View.INVISIBLE → no se ve, pero ocupa espacio.
+            // View.GONE → no se ve ni ocupa espacio.
+            binding.iconVisto.visibility =
+                    // android.view.View es la superclase de todos los componentes visuales en Android.
+                if (episodio.visto) android.view.View.VISIBLE
+                else android.view.View.INVISIBLE
 
 
             // --------------------------------------------------------
             // BLOQUE 2.2: CLICK EN EL ITEM
             // --------------------------------------------------------
             binding.root.setOnClickListener {
-                onClick(episodio)     // Ejecuta el callback que recibimos en el constructor
+                onClick(episodio)
             }
         }
     }
