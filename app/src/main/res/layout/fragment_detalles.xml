@@ -34,8 +34,8 @@
             android:layout_weight="1"
             android:text="fecha" />
 
-        <CheckBox
-            android:id="@+id/check_visto"
+        <Switch
+            android:id="@+id/switch_visto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="false"

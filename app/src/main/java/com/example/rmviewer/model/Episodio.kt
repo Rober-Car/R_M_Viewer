@@ -1,4 +1,6 @@
 package com.example.rmviewer.model
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
 /**
  * Data class usada en la UI y en el adaptador.
@@ -7,7 +9,9 @@ package com.example.rmviewer.model
  *
  * Además añadimos `viewed` (campo local, por defecto false) para marcar
  * si el usuario ha visto el episodio (se persistirá en Firestore más adelante).
+ *
  */
+@Parcelize
 data class Episodio(
 	val id: Int,                    // id del episodio (ej: 1)
 	val name: String,               // nombre del episodio (ej: "Pilot")
@@ -21,4 +25,4 @@ data class Episodio(
 	// Campo local (no proviene de la API)
 	// ----------------------------
 	var visto: Boolean = false     // indica si el usuario lo marcó como visto
-)
+):Parcelable

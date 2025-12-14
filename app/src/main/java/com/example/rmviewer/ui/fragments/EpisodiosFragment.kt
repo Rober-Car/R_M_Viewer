@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.rmviewer.R
 import com.example.rmviewer.adapter.AdaptadorEpisodios
 import com.example.rmviewer.databinding.FragmentEpisodiosBinding
@@ -18,6 +19,8 @@ import network.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
+
 
 class EpisodiosFragment : Fragment() {
 
@@ -52,9 +55,8 @@ class EpisodiosFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // ---------------------------
+
         // CONFIGURACIÓN DEL RECYCLER
-        // ---------------------------
 
         binding.episodiosRecyclerview.layoutManager =
             LinearLayoutManager(requireContext())
@@ -64,30 +66,71 @@ class EpisodiosFragment : Fragment() {
         adaptador = AdaptadorEpisodios { episodio ->
 
             // Acción al pulsar un episodio
-            findNavController().navigate(R.id.detallesFragment)
+            // Bundle es un contenedor de datos. Sirve para guardar pares clave‑valor y enviarlos
+            val bundle = Bundle()
+
+            // Insertar el objeto 'episodio' dentro del BundleUn
+            //"episodio" es la clave con la que lo recuperarás en el fragment destino
+            //episodio debe implementar Parcelable
+            bundle.putParcelable("episodio", episodio)
+
+            //  Navegar hacia 'detallesFragment' pasando el Bundle como argumento
+            findNavController().navigate(
+                R.id.detallesFragment,
+                bundle)
+
         }
 
         // Conectamos el adapter al RecyclerView
         binding.episodiosRecyclerview.adapter = adaptador
 
+        binding.episodiosRecyclerview.addOnScrollListener(
+            object : RecyclerView.OnScrollListener() {
+
+                override fun onScrolled(
+                    recyclerView: RecyclerView,
+                    dx: Int,
+                    dy: Int
+                ) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+                    // Solo reaccionamos cuando se hace scroll hacia abajo
+                    if (dy <= 0) return
+
+                    val layoutManager =
+                        recyclerView.layoutManager as LinearLayoutManager
+
+                    // Número total de elementos
+                    val totalItems = layoutManager.itemCount
+
+                    // Último elemento visible
+                    val lastVisibleItem =
+                        layoutManager.findLastVisibleItemPosition()
+
+                    // Si estamos cerca del final, cargamos más
+                    if (lastVisibleItem >= totalItems - 3) {
+                        cargarEpisodios()
+                    }
+                }
+            }
+        )
+
+
         // Primera carga de episodios (página 1)
         cargarEpisodios()
     }
 
-    // ---------------------------------------------------
+
     // FUNCIÓN QUE CARGA UNA PÁGINA DE EPISODIOS
-    // ---------------------------------------------------
     fun cargarEpisodios() {
 
         // ===========================================
         // BLOQUE CONFIGURACIÓN DE RETROFIT
-        // ===========================================
         // Creamos el "servicio" a partir de la interfaz ApiService
         val api = RetrofitClient.instance.create(ApiService::class.java)
 
         // ===========================================
         // BLOQUE DE CONTROL DE PAGINACIÓN
-        // ===========================================
         // Solo llamamos a la API si:
         // - Hay más páginas
         // - No se está cargando ya otra petición

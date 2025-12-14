@@ -11,11 +11,16 @@
         android:label="Episodios"
         tools:layout="@layout/fragment_episodios" />
 
+
+    <!-- Este fragment recibe un argumento de tipo Episodio -->
     <fragment
         android:id="@+id/detallesFragment"
         android:name="com.example.rmviewer.ui.fragments.DetallesFragment"
         android:label="Detalle"
         tools:layout="@layout/fragment_detalles"/>
+    <argument
+        android:name="episodio"
+        app:argType="com.example.rmviewer.model.Episodio" />
 
     <fragment
         android:id="@+id/estadisticasFragment"
