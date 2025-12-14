@@ -1,4 +1,4 @@
-package model
+package com.example.rmviewer.model
 
 // Esta clase es solo para saber en qué página estoy.
 data class Info(

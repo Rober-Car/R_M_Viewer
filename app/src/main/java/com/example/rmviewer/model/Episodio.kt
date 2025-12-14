@@ -1,4 +1,4 @@
-package model
+package com.example.rmviewer.model
 
 /**
  * Data class usada en la UI y en el adaptador.

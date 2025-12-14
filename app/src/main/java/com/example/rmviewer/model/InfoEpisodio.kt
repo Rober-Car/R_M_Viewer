@@ -1,4 +1,4 @@
-package model
+package com.example.rmviewer.model
 
 // Estos son los datos de UN solo episodio.
 data class InfoEpisodio(

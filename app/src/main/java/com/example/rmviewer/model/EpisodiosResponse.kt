@@ -1,4 +1,4 @@
-package model
+package com.example.rmviewer.model
 
 // Esta es la clase "padre". Representa TODO el JSON que recibo de golpe.
 data class EpisodiosResponse(

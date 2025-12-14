@@ -11,13 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rmviewer.R
 import com.example.rmviewer.adapter.AdaptadorEpisodios
 import com.example.rmviewer.databinding.FragmentEpisodiosBinding
-
-// Ajusta estos imports a tus packages reales:
-import model.Episodio
-import model.EpisodiosResponse
-import network.RetrofitClient
+import com.example.rmviewer.model.Episodio
+import com.example.rmviewer.model.EpisodiosResponse
 import network.ApiService
-
+import network.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -26,10 +23,26 @@ class EpisodiosFragment : Fragment() {
 
     private lateinit var binding: FragmentEpisodiosBinding
     private lateinit var adaptador: AdaptadorEpisodios
+
+    // ----------------------------
+    // VARIABLES DE PAGINACIÓN
+    // ----------------------------
+
+    // Página que se está cargando actualmente
+    private var paginaActual = 1
+
+    // Indica si la API tiene más páginas
+    private var masPaginas: Boolean = true
+
+    // Evita lanzar varias peticiones a la vez
+    private var cargando: Boolean = false
+
+    // Lista acumulada de episodios (todas las páginas)
     private val listaEpisodios = mutableListOf<Episodio>()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentEpisodiosBinding.inflate(inflater, container, false)
@@ -40,114 +53,101 @@ class EpisodiosFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // ---------------------------
-        // CONFIGURACIÓN RECYCLER
+        // CONFIGURACIÓN DEL RECYCLER
         // ---------------------------
+
         binding.episodiosRecyclerview.layoutManager =
             LinearLayoutManager(requireContext())
 
+        // Creamos el adaptador SOLO con el listener de click
+        // La lista interna la gestiona el propio adaptador
         adaptador = AdaptadorEpisodios { episodio ->
-            Toast.makeText(requireContext(), "Click en: ${episodio.name}", Toast.LENGTH_SHORT)
-                .show()
 
-        }
-
-           // ----------------------------
-        // BLOQUE: CONFIGURACIÓN INICIAL
-        // ----------------------------
-        binding.episodiosRecyclerview.layoutManager =
-            LinearLayoutManager(requireContext())
-
-
-        // Creamos el adaptador solo con el listener (la lista interna la gestiona el adaptador)
-        adaptador = AdaptadorEpisodios { episodio ->
-            // ----------------------------
-            // BLOQUE: CLICK EN ITEM
-            // ----------------------------
-
+            // Acción al pulsar un episodio
             findNavController().navigate(R.id.detallesFragment)
-
         }
 
-        // Conectamos el adaptador al RecyclerView (vacío inicialmente)
+        // Conectamos el adapter al RecyclerView
         binding.episodiosRecyclerview.adapter = adaptador
 
+        // Primera carga de episodios (página 1)
+        cargarEpisodios()
+    }
+
+    // ---------------------------------------------------
+    // FUNCIÓN QUE CARGA UNA PÁGINA DE EPISODIOS
+    // ---------------------------------------------------
+    fun cargarEpisodios() {
 
         // ===========================================
         // BLOQUE CONFIGURACIÓN DE RETROFIT
-        // El objetivo de este bloque es crear un "servicio" ejecutable
-        // a partir de la interfaz de la API que definimos (ApiService).
-        // ===========================================--------------------------
-
-        // Obtenemos la instancia de Retrofit que configuramos en RetrofitClient
-        // 'RetrofitClient.instance' contiene la configuración base para todas las peticiones:
-        // - La URL base de la API (ej: https://rickandmortyapi.com/api/).
-        // - El conversor JSON (Gson o Moshi) para transformar respuestas HTTP a objetos Kotlin.
-        val retrofit = RetrofitClient.instance
-
-        // Retrofit toma la interfaz 'ApiService' (el plano de las peticiones)
-        // y genera automáticamente una clase funcional ('apiService')
-        // que traduce las llamadas Kotlin a peticiones HTTP reales a la web.
-        val apiService = retrofit.create(ApiService::class.java)
+        // ===========================================
+        // Creamos el "servicio" a partir de la interfaz ApiService
+        val api = RetrofitClient.instance.create(ApiService::class.java)
 
         // ===========================================
-        // BLOQUE 2: EJECUCIÓN DE LA PETICIÓN
+        // BLOQUE DE CONTROL DE PAGINACIÓN
         // ===========================================
-        // Al llamar a 'getEpisodes(1)', Retrofit construye el objeto 'Call'.
-        // Este objeto 'Call' representa la petición HTTP específica,
-        // que en este caso será algo como: GET /api/episode?page=1
-        // IMPORTANTE: En este punto, la petición AÚN NO se ha enviado a la web.
-        // Solo se ha PREPARADO para ser ejecutada.
-        val call = apiService.getEpisodes(1)
+        // Solo llamamos a la API si:
+        // - Hay más páginas
+        // - No se está cargando ya otra petición
+        if (masPaginas && !cargando) {
 
-        call.enqueue(object : Callback<EpisodiosResponse> {
+            // Marcamos que empieza la carga
+            cargando = true
 
-            override fun onResponse(
-                call: Call<EpisodiosResponse>,
-                response: Response<EpisodiosResponse>
-            ) {
+            // Ejecutamos la llamada a la API de forma asíncrona
+            api.getEpisodios(paginaActual).enqueue(object : Callback<EpisodiosResponse> {
 
-                // ----------------------------
-                // BLOQUE: RESPUESTA OK
-                // ----------------------------
-                if (response.isSuccessful && response.body() != null) {
+                // -----------------------------------------
+                // RESPUESTA CORRECTA DEL SERVIDOR
+                // -----------------------------------------
+                override fun onResponse(
+                    call: Call<EpisodiosResponse>,
+                    response: Response<EpisodiosResponse>
+                ) {
+                    // Comprobamos que la respuesta sea válida
+                    if (response.isSuccessful && response.body() != null) {
 
-                    val episodios = response.body()!!.results   // List<Episodio>
+                        // Respuesta completa del JSON
+                        val respuesta = response.body()!!
 
-                    // ----------------------------
-                    // BLOQUE: ACTUALIZAR LISTA LOCAL (opcional)
-                    // ----------------------------
-                    listaEpisodios.clear()       // Limpia la lista anterior para evitar duplicados.
-                    listaEpisodios.addAll(episodios) // Agrega los nuevos episodios obtenidos de la API
+                        // Lista de episodios de ESTA página
+                        val episodios = respuesta.results
 
-                    // ----------------------------
-                    // BLOQUE: ACTUALIZAR ADAPTADOR (REFRESCA UI)
-                    // ----------------------------
-                    adaptador.setData(episodios)
+                        //acumulamos los episodiso de cada pagina
+                        listaEpisodios.addAll(episodios)
 
-                } else {
+                        // Actualizamos el adapter (por ahora REEMPLAZA la lista)
+                        adaptador.setData(listaEpisodios)
 
-                    // ----------------------------
-                    // BLOQUE: ERROR HTTP
-                    // ----------------------------
+                        // Comprobamos si hay más páginas mirando info.next
+                        masPaginas = respuesta.info.next != null
+
+                        // Si hay más páginas, avanzamos
+                        if (masPaginas) {
+                            paginaActual++
+                        }
+                    }
+
+                    // Marcamos que la carga ha terminado
+                    cargando = false
+                }
+
+                // -----------------------------------------
+                // ERROR DE RED
+                // -----------------------------------------
+                override fun onFailure(call: Call<EpisodiosResponse>, t: Throwable) {
                     Toast.makeText(
                         requireContext(),
-                        "Error HTTP: ${response.code()}",
-                        Toast.LENGTH_SHORT
+                        "Fallo de red: ${t.message}",
+                        Toast.LENGTH_LONG
                     ).show()
+
+                    // Marcamos que la carga ha terminado
+                    cargando = false
                 }
-            }
-
-            override fun onFailure(call: Call<EpisodiosResponse>, t: Throwable) {
-
-                // ----------------------------
-                // BLOQUE: ERROR DE RED
-                // ----------------------------
-                Toast.makeText(
-                    requireContext(),
-                    "Fallo de red: ${t.message}",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-        })
+            })
+        }
     }
 }

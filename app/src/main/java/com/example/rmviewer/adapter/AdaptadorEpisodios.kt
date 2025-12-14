@@ -3,9 +3,8 @@ package com.example.rmviewer.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.rmviewer.R
 import com.example.rmviewer.databinding.EpisodioItemBinding
-import model.Episodio
+import com.example.rmviewer.model.Episodio
 
 /**
  * Adaptador para mostrar episodios en un RecyclerView.
