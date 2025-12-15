@@ -50,6 +50,8 @@ class EpisodiosFragment : Fragment() {
     ): View {
         binding = FragmentEpisodiosBinding.inflate(inflater, container, false)
         return binding.root
+
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
