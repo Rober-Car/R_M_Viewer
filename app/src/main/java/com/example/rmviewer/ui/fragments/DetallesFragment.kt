@@ -75,6 +75,7 @@ class DetallesFragment : Fragment() {
 
                 // Obtenemos el UID del usuario (ya está logueado)
                 //Elvis Operator, si el valor de la izquierda es nulo, usa el valor de la derecha
+                //return@setOnCheckedChangeListener Detiene la ejecución del bloque de código  y sale de él inmediatamente.
                 val uidUsuario = FirebaseAuth.getInstance().currentUser?.uid
                     ?: return@setOnCheckedChangeListener
 

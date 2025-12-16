@@ -35,11 +35,12 @@
             android:text="fecha" />
 
         <Switch
-            android:id="@+id/switch_visto"
+            android:id="@+id/switchVisto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="false"
-            android:text="Episodio visto"/>
+            android:text="Episodio visto"
+            android:thumbTint="@color/switch_thumb"
+            android:trackTint="@color/switch_track"/>
 
     </LinearLayout>
 

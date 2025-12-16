@@ -14,12 +14,13 @@ import com.example.rmviewer.adapter.AdaptadorEpisodios
 import com.example.rmviewer.databinding.FragmentEpisodiosBinding
 import com.example.rmviewer.model.Episodio
 import com.example.rmviewer.model.EpisodiosResponse
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import network.ApiService
 import network.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
 
 
 class EpisodiosFragment : Fragment() {
@@ -42,6 +43,13 @@ class EpisodiosFragment : Fragment() {
 
     // Lista acumulada de episodios (todas las páginas)
     private val listaEpisodios = mutableListOf<Episodio>()
+
+    //Crea un objeto (database) para gestionar la Base de Datos (guardar/leer datos).
+    // Conéctata la base de datos de Firebase de ESTE proyecto
+    private val database = FirebaseDatabase.getInstance()
+
+
+    private var mostrandoSoloVistos = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -79,12 +87,26 @@ class EpisodiosFragment : Fragment() {
             //  Navegar hacia 'detallesFragment' pasando el Bundle como argumento
             findNavController().navigate(
                 R.id.detallesFragment,
-                bundle)
+                bundle
+            )
 
         }
 
         // Conectamos el adapter al RecyclerView
         binding.episodiosRecyclerview.adapter = adaptador
+
+        // sellcionar capituos vistos y no vistos
+        binding.ivVistos.setOnClickListener {
+            mostrandoSoloVistos = true
+            actualizarLista()
+        }
+
+        binding.ivTodos.setOnClickListener {
+            mostrandoSoloVistos = false
+            actualizarLista()
+        }
+
+
 
         binding.episodiosRecyclerview.addOnScrollListener(
             object : RecyclerView.OnScrollListener() {
@@ -163,8 +185,8 @@ class EpisodiosFragment : Fragment() {
                         //acumulamos los episodiso de cada pagina
                         listaEpisodios.addAll(episodios)
 
-                        // Actualizamos el adapter (por ahora REEMPLAZA la lista)
-                        adaptador.setData(listaEpisodios)
+                        aplicarVistosAFirebase(listaEpisodios)
+
 
                         // Comprobamos si hay más páginas mirando info.next
                         masPaginas = respuesta.info.next != null
@@ -193,6 +215,65 @@ class EpisodiosFragment : Fragment() {
                     cargando = false
                 }
             })
+        }
+    }
+
+    //  función para aplicar el estado de 'visto' desde Firebase
+
+    private fun aplicarVistosAFirebase(episodios: List<Episodio>) {
+
+
+        // Obtiene el ID único (uid) del usuario conectado.
+        // Si el usuario no está logueado (uid es null), la función termina inmediatamente (return).
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+
+        // Construye la referencia de la base de datos que apunta a la ubicación donde están
+        // guardados los episodios vistos de este usuario específico.
+        val referencia = database
+            .getReference("usuarios")
+            .child(uid)
+            .child("episodios_vistos")
+
+        // La ruta de la base de datos es: usuarios/{UID_USUARIO}/episodios_vistos
+
+
+        // get () Devuelve  una FOTO COMPLETA  del árbol de carpetas,esa foto es el DataSnapshot
+        //Un DataSnapshot es una copia en memoria de los datos que hay en una ruta concreta de Firebase en ese momento.
+        //.addOnSuccessListener { snapshot -> Se ejecuta solo si la lectura fue correcta
+        referencia.get().addOnSuccessListener { snapshot ->
+
+
+            // Itera sobre CADA objeto 'Episodio' de la lista local que se le pasó a la función.
+            for (episodio in episodios) {
+
+                //Busca en Firebase si este episodio (por su id) está marcado como visto.
+                //Si existe, usa su valor. Si no existe, considéralo NO visto.
+                val visto = snapshot.child(episodio.id.toString())
+                    //Dame el valor de este nodo y conviértelo a Boolean
+                    // si es nulll usa false
+                    .getValue(Boolean::class.java) ?: false
+
+                // Asigna el estado 'visto' obtenido de Firebase al objeto 'Episodio' local.
+                episodio.visto = visto
+            }
+
+            // Llama al adaptador (que maneja la lista en la pantalla) para que
+            // se redibuje con los datos actualizados (ahora incluyendo el estado de 'visto').
+            if (mostrandoSoloVistos) {
+                adaptador.setData(episodios.filter { it.visto })
+            } else {
+                adaptador.setData(episodios)
+            }
+        }
+    }
+
+    //funcion que muestra episodios vistos y no vistos
+    private fun actualizarLista() {
+        if (mostrandoSoloVistos) {
+            adaptador.setData(listaEpisodios.filter { it.visto })
+        } else {
+            adaptador.setData(listaEpisodios)
         }
     }
 }

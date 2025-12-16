@@ -3,6 +3,7 @@ package com.example.rmviewer.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.rmviewer.R
 import com.example.rmviewer.databinding.EpisodioItemBinding
 import com.example.rmviewer.model.Episodio
 
@@ -35,26 +36,25 @@ class AdaptadorEpisodios(
         // Post, etc.) Y rellenar las vistas del layout del ítem con esos datos.
         fun bind(episodio: Episodio) {
 
+
             // Muestra los textos del item
             binding.itemNombreEpisodio.text = episodio.name
             binding.itemCodigoEpisodio.text = episodio.episode  //fecha
             binding.itemFechaEpisodio.text = episodio.air_date //codigo
 
             // --------------------------------------------------------
-            // CONTROL DE ICONO "VISTO"
+            // CONTROL DE ICONO "VISTO" eliminado
             // --------------------------------------------------------
 
-            //.visibility es una propiedad de cualquier View,controla cómo se muestra u oculta esa
-            // vista en la interfaz.
 
-            // Cambia la visibilidad de esa vista. Puede ser:
-            //View.VISIBLE → se muestra.
-            // View.INVISIBLE → no se ve, pero ocupa espacio.
-            // View.GONE → no se ve ni ocupa espacio.
-            binding.iconVisto.visibility =
-                    // android.view.View es la superclase de todos los componentes visuales en Android.
-                if (episodio.visto) android.view.View.VISIBLE
-                else android.view.View.INVISIBLE
+            // Si el atributo visto de el objeto episodio es true le da el icono visto
+
+            /*if (episodio.visto) {
+                binding.iconVisto.setImageResource(R.drawable.icon_visto)
+            } else {
+                binding.iconVisto.setImageResource(R.drawable.icon_no_visto)
+            }*/
+
 
 
             // --------------------------------------------------------
