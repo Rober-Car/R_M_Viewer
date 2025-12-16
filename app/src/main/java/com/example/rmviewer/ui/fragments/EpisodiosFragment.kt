@@ -99,11 +99,13 @@ class EpisodiosFragment : Fragment() {
         binding.ivVistos.setOnClickListener {
             mostrandoSoloVistos = true
             actualizarLista()
+            botnsVistosResaltado()
         }
 
         binding.ivTodos.setOnClickListener {
             mostrandoSoloVistos = false
             actualizarLista()
+            botnsVistosResaltado()
         }
 
 
@@ -276,4 +278,16 @@ class EpisodiosFragment : Fragment() {
             adaptador.setData(listaEpisodios)
         }
     }
+
+
+    private fun botnsVistosResaltado() {
+        if (mostrandoSoloVistos) {
+            binding.ivVistos.setBackgroundResource(R.drawable.borde_activo)
+            binding.ivTodos.setBackgroundResource(R.drawable.borde_inactivo)
+        } else {
+            binding.ivVistos.setBackgroundResource(R.drawable.borde_inactivo)
+            binding.ivTodos.setBackgroundResource(R.drawable.borde_activo)
+        }
+    }
+
 }
