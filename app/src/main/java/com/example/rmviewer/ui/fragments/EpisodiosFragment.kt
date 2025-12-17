@@ -166,7 +166,8 @@ class EpisodiosFragment : Fragment() {
             cargando = true
 
             // Ejecutamos la llamada a la API de forma asíncrona
-            api.getEpisodios(paginaActual).enqueue(object : Callback<EpisodiosResponse> {
+            api.getEpisodios(paginaActual).
+            enqueue(object : Callback<EpisodiosResponse> {
 
                 // -----------------------------------------
                 // RESPUESTA CORRECTA DEL SERVIDOR

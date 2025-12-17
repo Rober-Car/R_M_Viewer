@@ -5,14 +5,24 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.recyclerview.widget.GridLayoutManager
+import com.example.rmviewer.adapter.AdaptadorPersonajes
 import com.example.rmviewer.databinding.FragmentDetallesBinding
 import com.example.rmviewer.model.Episodio
+import com.example.rmviewer.model.Personaje
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.auth.FirebaseAuth
+import network.ApiService
+import network.RetrofitClient
+import retrofit2.Callback
+import retrofit2.Call
+import retrofit2.Response
 
 
 class DetallesFragment : Fragment() {
 
+    private lateinit var personajesAdapter: AdaptadorPersonajes
     private lateinit var binding: FragmentDetallesBinding
 
     // Objeto recibido del fragment anterior
@@ -33,7 +43,6 @@ class DetallesFragment : Fragment() {
     // Obtiene el UID (identificador único) del usuario que ha iniciado sesión actualmente.
     //Se usa '!!' porque se asume que el usuario SIEMPRE está logueado en este punto y no puede ser null
     private val uid = auth.currentUser!!.uid
-
 
 
     override fun onCreateView(
@@ -99,6 +108,78 @@ class DetallesFragment : Fragment() {
 
             }
         }
+
+
+        //---------CONFIGURANDO EL ADAPATADOR
+
+        personajesAdapter = AdaptadorPersonajes { personaje ->
+
+        }
+        binding.personajesRecyclerview.layoutManager =
+            GridLayoutManager(requireContext(), 2)
+
+        binding.personajesRecyclerview.adapter = personajesAdapter
+        cargarPersonajes()
+
+    }
+
+
+    fun cargarPersonajes() {
+
+        //===========================================
+        // BLOQUE CONFIGURACIÓN DE RETROFIT
+        // Creamos el "servicio" a partir de la interfaz ApiService
+        val api = RetrofitClient.instance.create(ApiService::class.java)
+
+        //extraigo la lista de urls qeu contiene le atributo character
+        val listaUrlsPersonajes = episodio?.characters
+
+
+        //Usamos el signo '?' porque 'listaUrlsPersonajes' podría ser nula.
+        //'.map' recorre cada URL de la lista (una por una).
+        //'substringAfterLast("/")' busca la última barra inclinada "/"
+        // y se queda con todo lo que hay despues y lo guarda en una lista
+        val idsList = listaUrlsPersonajes?.map { url ->
+            url.substringAfterLast("/")
+        }
+
+        //“Si es null, salgo de la función.”
+        var ids = idsList?.joinToString(",") ?: return
+
+
+        api.getPersonajes(ids).enqueue(object : Callback<List<Personaje>> {
+
+            // -----------------------------------------
+            // RESPUESTA CORRECTA DEL SERVIDOR
+            // -----------------------------------------
+
+            override fun onResponse(
+                call: Call<List<Personaje>>,
+                response: Response<List<Personaje>>
+            ) {
+                //Verifica si la respuesta del servidor fue exitosa (código 200 OK).
+                if (response.isSuccessful) {
+
+                    // response.body()' contiene los datos reales (la lista de personajes).
+                    // Usamos '.let { ... }' para ejecutar el código solo si los datos NO son nulos.
+                    response.body()?.let { datosRecibidos ->
+
+                        // Se lo enviamos al adaptador para que actualice la lista en la pantalla.
+                        personajesAdapter.setData(datosRecibidos)
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<List<Personaje>>, t: Throwable) {
+                Toast.makeText(
+                    requireContext(),
+                    "Fallo de red: ${t.message}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        })
+
+
     }
 }
 
