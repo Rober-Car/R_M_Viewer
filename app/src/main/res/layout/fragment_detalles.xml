@@ -49,6 +49,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:text="Lista de personajes que aparecen en el episodio (proviene de las URLs de personajes incluidas en la respuesta del episodio):
-La lista de personajes puede mostrarse de forma simple (solo nombres) o de forma más elaborada (grid con imágenes y nombres)"/>
+        android:text="Personajes del episodio"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/personajes_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </LinearLayout>

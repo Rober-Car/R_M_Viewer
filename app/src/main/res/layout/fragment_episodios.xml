@@ -14,32 +14,41 @@
         android:gravity="center"
         android:padding="8dp">
 
-
         >
 
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/iv_vistos"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginEnd="40dp"
             android:padding="8dp"
             android:scaleType="centerInside"
             android:src="@drawable/icon_visto"
+            app:shapeAppearanceOverlay="@style/RoundedImage"
+            app:strokeWidth="2dp"
+            app:strokeColor="@color/green_500"
             android:clickable="true"
-            android:focusable="true"/>
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"/>/>
 
 
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/iv_todos"
 
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:padding="8dp"
+            android:layout_marginEnd="40dp"
             android:scaleType="centerInside"
             android:src="@drawable/icon_no_visto"
+            app:shapeAppearanceOverlay="@style/RoundedImage"
+            app:strokeWidth="2dp"
+            app:strokeColor="@color/green_500"
             android:clickable="true"
-            android:focusable="true"/>
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"/>/>
 
 
     </LinearLayout>
