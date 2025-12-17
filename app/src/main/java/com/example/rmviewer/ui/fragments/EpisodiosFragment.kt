@@ -48,6 +48,9 @@ class EpisodiosFragment : Fragment() {
     // Conéctata la base de datos de Firebase de ESTE proyecto
     private val database = FirebaseDatabase.getInstance()
 
+    private val firestore = FirebaseFirestore.getInstance()
+
+
 
     private var mostrandoSoloVistos = false
 
@@ -109,7 +112,8 @@ class EpisodiosFragment : Fragment() {
         }
 
 
-
+            // Accedemos al RecyclerView de episodios a través del binding.
+            //'addOnScrollListener' añade un "vigilante" que observa cada movimiento de la lista.
         binding.episodiosRecyclerview.addOnScrollListener(
             object : RecyclerView.OnScrollListener() {
 
@@ -270,6 +274,12 @@ class EpisodiosFragment : Fragment() {
             }
         }
     }
+
+
+    //  función para aplicar el estado de 'visto' desde Firestone
+
+   // private fun aplicarVistosAFirebase(episodios: List<Episodio>) {
+
 
     //funcion que muestra episodios vistos y no vistos
     private fun actualizarLista() {
