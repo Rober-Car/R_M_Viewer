@@ -16,6 +16,7 @@ import com.example.rmviewer.model.Episodio
 import com.example.rmviewer.model.EpisodiosResponse
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 import network.ApiService
 import network.RetrofitClient
 import retrofit2.Call
@@ -49,6 +50,9 @@ class EpisodiosFragment : Fragment() {
     private val database = FirebaseDatabase.getInstance()
 
     private val firestore = FirebaseFirestore.getInstance()
+
+
+
 
 
 
@@ -148,6 +152,8 @@ class EpisodiosFragment : Fragment() {
 
         // Primera carga de episodios (página 1)
         cargarEpisodios()
+
+
     }
 
 
@@ -192,7 +198,7 @@ class EpisodiosFragment : Fragment() {
                         //acumulamos los episodiso de cada pagina
                         listaEpisodios.addAll(episodios)
 
-                        aplicarVistosAFirebase(listaEpisodios)
+                        aplicarVistosDesdeFirestore(listaEpisodios)
 
 
                         // Comprobamos si hay más páginas mirando info.next
@@ -227,58 +233,45 @@ class EpisodiosFragment : Fragment() {
 
     //  función para aplicar el estado de 'visto' desde Firebase
 
-    private fun aplicarVistosAFirebase(episodios: List<Episodio>) {
+    private fun aplicarVistosDesdeFirestore(episodios: List<Episodio>) {
 
-
-        // Obtiene el ID único (uid) del usuario conectado.
-        // Si el usuario no está logueado (uid es null), la función termina inmediatamente (return).
+        //  Si el usuario no está conectado, no podemos saber qué ha visto.
+        // Salimos de la función con 'return' para evitar errores.
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
+        //Ruta en Firestore: Navegamos por la estructura de carpetas (colecciones).
+        firestore
+            .collection("usuarios")           // Entra en la carpeta de usuarios
+            .document(uid)                    // Busca el documento con el ID del usuario
+            .collection("episodios_vistos")   // Entra en su lista personal de vistos
+            .get()                            // Pide los datos al servidor (lectura única)
 
-        // Construye la referencia de la base de datos que apunta a la ubicación donde están
-        // guardados los episodios vistos de este usuario específico.
-        val referencia = database
-            .getReference("usuarios")
-            .child(uid)
-            .child("episodios_vistos")
+            .addOnSuccessListener { snapshot ->  // Se ejecuta cuando Firestore responde con éxito
 
-        // La ruta de la base de datos es: usuarios/{UID_USUARIO}/episodios_vistos
+                // Procesar los documentos: Cada documento es un episodio marcado.
+                for (document in snapshot.documents) {
 
+                    val idEpisodio = document.id                     // El nombre del documento es el ID
+                    val visto = document.getBoolean("viewed") ?: false // Lee el campo 'viewed' (true/false)
 
-        // get () Devuelve  una FOTO COMPLETA  del árbol de carpetas,esa foto es el DataSnapshot
-        //Un DataSnapshot es una copia en memoria de los datos que hay en una ruta concreta de Firebase en ese momento.
-        //.addOnSuccessListener { snapshot -> Se ejecuta solo si la lectura fue correcta
-        referencia.get().addOnSuccessListener { snapshot ->
+                    //  Busca en la lista local (episodios) el que coincida con el ID.
+                    episodios.find { it.id.toString() == idEpisodio }?.let { episodioEncontrado ->
+                        // Si lo encuentra, le pone el estado de 'visto' que trajo de internet.
+                        episodioEncontrado.visto = visto
+                    }
+                }
 
-
-            // Itera sobre CADA objeto 'Episodio' de la lista local que se le pasó a la función.
-            for (episodio in episodios) {
-
-                //Busca en Firebase si este episodio (por su id) está marcado como visto.
-                //Si existe, usa su valor. Si no existe, considéralo NO visto.
-                val visto = snapshot.child(episodio.id.toString())
-                    //Dame el valor de este nodo y conviértelo a Boolean
-                    // si es nulll usa false
-                    .getValue(Boolean::class.java) ?: false
-
-                // Asigna el estado 'visto' obtenido de Firebase al objeto 'Episodio' local.
-                episodio.visto = visto
+                // 5. **Refrescar la Pantalla**:
+                // Aquí decide qué mostrar según si el usuario tiene activado un filtro.
+                if (mostrandoSoloVistos) {
+                    // Si el filtro está activo, solo manda al adaptador los que tengan visto = true.
+                    adaptador.setData(episodios.filter { it.visto })
+                } else {
+                    // Si no, manda la lista completa.
+                    adaptador.setData(episodios)
+                }
             }
-
-            // Llama al adaptador (que maneja la lista en la pantalla) para que
-            // se redibuje con los datos actualizados (ahora incluyendo el estado de 'visto').
-            if (mostrandoSoloVistos) {
-                adaptador.setData(episodios.filter { it.visto })
-            } else {
-                adaptador.setData(episodios)
-            }
-        }
     }
-
-
-    //  función para aplicar el estado de 'visto' desde Firestone
-
-   // private fun aplicarVistosAFirebase(episodios: List<Episodio>) {
 
 
     //funcion que muestra episodios vistos y no vistos

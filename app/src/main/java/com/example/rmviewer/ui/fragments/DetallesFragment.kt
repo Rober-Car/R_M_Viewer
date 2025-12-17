@@ -13,11 +13,13 @@ import com.example.rmviewer.model.Episodio
 import com.example.rmviewer.model.Personaje
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import network.ApiService
 import network.RetrofitClient
 import retrofit2.Callback
 import retrofit2.Call
 import retrofit2.Response
+
 
 
 class DetallesFragment : Fragment() {
@@ -34,7 +36,7 @@ class DetallesFragment : Fragment() {
 
     // Crea una referencia que apunta al nodo principal "Usuarios" en la base de datos de Firebase.
     // Si no existe, Firebase la creará cuando escribas algo
-    private val usuariosRef = database.getReference("Usuarios")
+    private val usuariosRef = database.getReference("usuarios")
 
 
     //  Inicializa la conexión con el servicio de Autenticación de Firebase
@@ -44,6 +46,8 @@ class DetallesFragment : Fragment() {
     //Se usa '!!' porque se asume que el usuario SIEMPRE está logueado en este punto y no puede ser null
     private val uid = auth.currentUser!!.uid
 
+
+    private val firestore = FirebaseFirestore.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -82,29 +86,30 @@ class DetallesFragment : Fragment() {
             episodio?.let { ep ->
                 ep.visto = isChecked
 
-                // Obtenemos el UID del usuario (ya está logueado)
+
+
+               // Obtenemos el UID del usuario (ya está logueado)
                 //Elvis Operator, si el valor de la izquierda es nulo, usa el valor de la derecha
                 //return@setOnCheckedChangeListener Detiene la ejecución del bloque de código  y sale de él inmediatamente.
                 val uidUsuario = FirebaseAuth.getInstance().currentUser?.uid
                     ?: return@setOnCheckedChangeListener
 
-                // Toma el valor de la propiedad 'id' del objeto 'ep'.y lo Convierte en una cadena de texto
-                // Almacena el resultado final (el ID como String) en la nueva variable 'id'.
-                val idEpisodio = ep.id.toString()
+                // Crea un mapa mutable con los datos del episodio a guardar en Firestore
+                val datosEpisodio = hashMapOf(
+                    "name" to ep.name,         // Clave "name": almacena el nombre del episodio (de la variable ep)
+                    "episode" to ep.episode,   // Clave "episode": almacena el código del episodio (ej. "S01E01")
+                    "air_date" to ep.air_date, // Clave "air_date": almacena la fecha de emisión del episodio
+                    "viewed" to isChecked      // Clave "viewed": almacena true si está marcado como visto, false si no
+                )
 
-                //  Construye la ruta de la base de datos (Referencia):
-                //child() 👉 entra o crea carpetas
-                // setValue() 👉 guarda el contenido dentro
-                val referencia = database // Comienza en la raíz de la Base de Datos.
-                    .getReference("usuarios") ///usuarios,Si no existe, Firebase la creará
-                    .child(uidUsuario)
-                    .child("episodios_vistos")
-                    .child(idEpisodio)
+                // Accede a la base de datos Firestore
+                firestore
+                    .collection("Usuarios")                  // Selecciona la colección principal "Usuarios"
+                    .document(uidUsuario)                    // Selecciona el documento del usuario actual usando su UID
+                    .collection("episodios_vistos")          // Accede a la subcolección "episodios_vistos" dentro del usuario
+                    .document(ep.id.toString())              // Selecciona (o crea) un documento con el ID del episodio convertido a texto
+                    .set(datosEpisodio)                                     // Guarda todo el mapa como datos del documento (sobrescribe si ya existe)
 
-                //referencia es un DatabaseReference que apunta exactamente a un episodio.           /
-                // Guarda el valor 'isChecked' (true o false) en la ubicación final de la referencia.
-                // Firebase escribe el valor en ese nodo
-                referencia.setValue(isChecked)
 
             }
         }

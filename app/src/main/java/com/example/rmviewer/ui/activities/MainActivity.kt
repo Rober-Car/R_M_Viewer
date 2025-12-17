@@ -122,9 +122,24 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
 
+
                 R.id.nav_episodios -> {
-                    navController.navigate(R.id.episodiosFragment)
+
+                    // popBackStack' se encarga de "limpiar" el camino de vuelta.
+                    // En lugar de abrir una pantalla nueva, busca si 'episodiosFragment' ya estaba abierto.
+                    navController.popBackStack(
+                        R.id.episodiosFragment, // El destino al que queremos regresar.
+
+                        // Quiere decir: "Vuelve hasta episodiosFragment, pero NO lo cierres a él".
+                        // Si fuera 'true', también cerraría episodiosFragment.
+                        false
+                    )
+
+                    //  Una vez que ya ordenamos la navegación, cerramos el menú lateral (Drawer)
+                    // para que no tape la pantalla.
                     drawerLayout.close()
+
+                    // Devolvemos 'true' para decirle al sistema que ya procesamos el clic correctamente.
                     true
                 }
 
