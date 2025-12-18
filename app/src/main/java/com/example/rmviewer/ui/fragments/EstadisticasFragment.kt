@@ -6,55 +6,130 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.rmviewer.R
+import com.example.rmviewer.databinding.FragmentEstadisticasBinding
+import com.example.rmviewer.model.EpisodiosResponse
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
+import network.ApiService
+import network.RetrofitClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [EstadisticasFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class EstadisticasFragment : Fragment() {
-	// TODO: Rename and change types of parameters
-	private var param1: String? = null
-	private var param2: String? = null
 
-	override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
-		arguments?.let {
-			param1 = it.getString(ARG_PARAM1)
-			param2 = it.getString(ARG_PARAM2)
-		}
-	}
 
-	override fun onCreateView(
-		inflater: LayoutInflater, container: ViewGroup?,
-		savedInstanceState: Bundle?
-	): View? {
-		// Inflate the layout for this fragment
-		return inflater.inflate(R.layout.fragment_estadisticas, container, false)
-	}
+    private lateinit var binding: FragmentEstadisticasBinding
 
-	companion object {
-		/**
-		 * Use this factory method to create a new instance of
-		 * this fragment using the provided parameters.
-		 *
-		 * @param param1 Parameter 1.
-		 * @param param2 Parameter 2.
-		 * @return A new instance of fragment EstadisticasFragment.
-		 */
-		// TODO: Rename and change types and number of parameters
-		@JvmStatic
-		fun newInstance(param1: String, param2: String) =
-			EstadisticasFragment().apply {
-				arguments = Bundle().apply {
-					putString(ARG_PARAM1, param1)
-					putString(ARG_PARAM2, param2)
-				}
-			}
-	}
+    // Creamos el "servicio" a partir de la interfaz ApiService
+    val api = RetrofitClient.instance.create(ApiService::class.java)
+
+    //Crea un objeto (database) para gestionar la Base de Datos (guardar/leer datos).
+    // Conéctata la base de datos de Firebase de ESTE proyecto
+    private val database = FirebaseDatabase.getInstance()
+
+    private val firestore = FirebaseFirestore.getInstance()
+
+    private var totalEpisodios: Int = 0
+
+    private var vistos: Int = 0
+
+
+    //Es la función más importante. Su único trabajo es "inflar" el diseño XML
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentEstadisticasBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+
+    //(El Cerebro)
+    //Esta es la función donde ocurre la magia. Se ejecuta justo después de que la vista se ha creado.
+    // Es el lugar más seguro para configurar botones, listas y observadores.
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        contadorEpisodios()
+        contadorEpisodiosVistos()
+
+    }
+
+    private fun contadorEpisodios() {
+
+        api.getEpisodios(1).enqueue(object : Callback<EpisodiosResponse> {
+
+            // -----------------------------------------
+            // RESPUESTA CORRECTA DEL SERVIDOR
+            // -----------------------------------------
+            //El método onResponse sirve para recibir y procesar el paquete de información que viene desde internet
+            //Es obligatorio Cuando usas llamadas Asíncronas (.enqueue)
+            override fun onResponse(
+                //El Call es la orden que le diste a Retrofit: "Tu misión es ir a esta URL y traerme episodios"
+                call: Call<EpisodiosResponse>,
+                //response : lo que hay dentro de él es un objeto de tipo Response,
+                //response es el nombre que le das al hueco donde Retrofit va a depositar la información
+                response: Response<EpisodiosResponse>
+            ) {
+                //  Verificamos dos cosas:
+                // - 'isSuccessful': Que el código sea de éxito y no un error
+                // - 'body() != null': Que el contenido del paquete no venga vacío.
+                if (response.isSuccessful && response.body() != null) {
+
+                    // Guardamos el número total de episodios que hay en la API.
+                    // Accedemos a 'body()', luego al objeto 'info' y finalmente al campo 'count'.
+                    // El '!!' se usa porque arriba ya comprobamos que no es nulo, así que es seguro.
+                    totalEpisodios = response.body()!!.info.count
+
+
+                }
+            }
+
+            override fun onFailure(call: Call<EpisodiosResponse>, t: Throwable) {
+                // De momento no hacemos nada
+            }
+
+        })
+    }
+
+    private fun contadorEpisodiosVistos() {
+
+
+        //  Si el usuario no está conectado, no podemos saber qué ha visto.
+        // Salimos de la función con 'return' para evitar errores.
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        //Ruta en Firestore: Navegamos por la estructura de carpetas (colecciones).
+        firestore
+            .collection("usuarios")           // Entra en la carpeta de usuarios
+            .document(uid)                    // Busca el documento con el ID del usuario
+            .collection("episodios_vistos")   // Entra en su lista personal de vistos
+            .get()
+            //La petición (.get()): Es el acto de pedir la información.
+            //  RESPUESTA EXITOSA: Este bloque solo se ejecuta cuando los datos llegan de Google.
+            .addOnSuccessListener { snapshot ->  // Se ejecuta cuando Firestore responde con éxito
+
+              // snapshot.size nos dice cuántos documentos hay en esa carpeta.
+                vistos  = snapshot.size()
+                //Una vez que tenemos el número, llamamos a la función que pinta la pantalla
+                actualizarUI()
+
+            }
+    }
+
+    //funcion que muestra en el layout el resultado de los calculos
+    private fun actualizarUI() {
+
+        //envio datos
+        binding.tvTotalEpisodios.text = totalEpisodios.toString()
+        binding.tvEpisodiosVistos.text = vistos.toString()
+
+        if (totalEpisodios > 0) {
+            val porcentaje = (vistos * 100) / totalEpisodios
+            binding.tvPorcentaje.text = "$porcentaje %"
+        }
+    }
 }

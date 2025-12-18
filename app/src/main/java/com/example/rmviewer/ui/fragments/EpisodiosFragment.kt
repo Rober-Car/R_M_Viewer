@@ -115,7 +115,6 @@ class EpisodiosFragment : Fragment() {
             botnsVistosResaltado()
         }
 
-
             // Accedemos al RecyclerView de episodios a través del binding.
             //'addOnScrollListener' añade un "vigilante" que observa cada movimiento de la lista.
         binding.episodiosRecyclerview.addOnScrollListener(
@@ -149,13 +148,10 @@ class EpisodiosFragment : Fragment() {
             }
         )
 
-
         // Primera carga de episodios (página 1)
         cargarEpisodios()
 
-
     }
-
 
     // FUNCIÓN QUE CARGA UNA PÁGINA DE EPISODIOS
     fun cargarEpisodios() {
@@ -209,7 +205,6 @@ class EpisodiosFragment : Fragment() {
                             paginaActual++
                         }
                     }
-
                     // Marcamos que la carga ha terminado
                     cargando = false
                 }
@@ -230,46 +225,45 @@ class EpisodiosFragment : Fragment() {
             })
         }
     }
-
     //  función para aplicar el estado de 'visto' desde Firebase
-
     private fun aplicarVistosDesdeFirestore(episodios: List<Episodio>) {
 
-        //  Si el usuario no está conectado, no podemos saber qué ha visto.
-        // Salimos de la función con 'return' para evitar errores.
+        //SEGURIDAD: Obtenemos el ID del usuario. Si no hay sesión, cancelamos.
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
-        //Ruta en Firestore: Navegamos por la estructura de carpetas (colecciones).
+        // PETICIÓN: Vamos a la subcolección donde guardamos los episodios del usuario.
         firestore
-            .collection("usuarios")           // Entra en la carpeta de usuarios
-            .document(uid)                    // Busca el documento con el ID del usuario
-            .collection("episodios_vistos")   // Entra en su lista personal de vistos
-            .get()                            // Pide los datos al servidor (lectura única)
+            .collection("usuarios")
+            .document(uid)
+            .collection("episodios_vistos")
+            .get() // Pedimos la "foto" (snapshot) de todos los documentos ahí guardados.
+            .addOnSuccessListener { snapshot ->
 
-            .addOnSuccessListener { snapshot ->  // Se ejecuta cuando Firestore responde con éxito
+                // EXTRACCIÓN: Convertimos la lista de documentos en un Set de IDs.
+                // .map { it.id } extrae solo el nombre/ID del documento (ej: "1", "2").
+                // .toSet() lo hace más rápido para buscar después.
+                val idsVistos = snapshot.documents
+                    .map { it.id }
+                    .toSet()
 
-                // Procesar los documentos: Cada documento es un episodio marcado.
-                for (document in snapshot.documents) {
-
-                    val idEpisodio = document.id                     // El nombre del documento es el ID
-                    val visto = document.getBoolean("viewed") ?: false // Lee el campo 'viewed' (true/false)
-
-                    //  Busca en la lista local (episodios) el que coincida con el ID.
-                    episodios.find { it.id.toString() == idEpisodio }?.let { episodioEncontrado ->
-                        // Si lo encuentra, le pone el estado de 'visto' que trajo de internet.
-                        episodioEncontrado.visto = visto
-                    }
+                // CRUCE DE DATOS: Comparamos la lista de la API con lo que hay en Firestore.
+                for (episodio in episodios) {
+                    // Si el ID del episodio de la API existe en nuestro Set de Firestore,
+                    // marcamos la propiedad 'visto' como true.
+                    episodio.visto = idsVistos.contains(episodio.id.toString())
                 }
 
-                // 5. **Refrescar la Pantalla**:
-                // Aquí decide qué mostrar según si el usuario tiene activado un filtro.
+                // 5. ACTUALIZACIÓN DE INTERFAZ: Enviamos los datos procesados al Adaptador.
                 if (mostrandoSoloVistos) {
-                    // Si el filtro está activo, solo manda al adaptador los que tengan visto = true.
+                    // Si el filtro está activo, solo enviamos los que tienen visto = true.
                     adaptador.setData(episodios.filter { it.visto })
                 } else {
-                    // Si no, manda la lista completa.
+                    // Si no, enviamos la lista completa (vistos y no vistos).
                     adaptador.setData(episodios)
                 }
+            }
+            .addOnFailureListener {
+                // Es buena práctica manejar errores de conexión aquí.
             }
     }
 

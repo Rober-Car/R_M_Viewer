@@ -21,7 +21,6 @@ import retrofit2.Call
 import retrofit2.Response
 
 
-
 class DetallesFragment : Fragment() {
 
     private lateinit var personajesAdapter: AdaptadorPersonajes
@@ -30,15 +29,6 @@ class DetallesFragment : Fragment() {
     // Objeto recibido del fragment anterior
     private var episodio: Episodio? = null
 
-    //Crea un objeto (database) para gestionar la Base de Datos (guardar/leer datos).
-    // Conéctata la base de datos de Firebase de ESTE proyecto
-    private val database = FirebaseDatabase.getInstance()
-
-    // Crea una referencia que apunta al nodo principal "Usuarios" en la base de datos de Firebase.
-    // Si no existe, Firebase la creará cuando escribas algo
-    private val usuariosRef = database.getReference("usuarios")
-
-
     //  Inicializa la conexión con el servicio de Autenticación de Firebase
     private val auth = FirebaseAuth.getInstance()
 
@@ -46,9 +36,18 @@ class DetallesFragment : Fragment() {
     //Se usa '!!' porque se asume que el usuario SIEMPRE está logueado en este punto y no puede ser null
     private val uid = auth.currentUser!!.uid
 
+    //Crea un objeto (database) para gestionar la Base de Datos (guardar/leer datos).
+    // Conéctata la base de datos de Firebase de ESTE proyecto
+    private val database = FirebaseDatabase.getInstance()
+
+
+    // Crea una referencia que apunta al nodo principal "Usuarios" en la base de datos de Firebase.
+    // Si no existe, Firebase la creará cuando escribas algo
+    private val usuariosRef = database.getReference("usuarios")
 
     private val firestore = FirebaseFirestore.getInstance()
 
+    //Es la función más importante. Su único trabajo es "inflar" el diseño XML
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -58,6 +57,10 @@ class DetallesFragment : Fragment() {
         return binding.root
     }
 
+
+    //(El Cerebro)
+    //Esta es la función donde ocurre la magia. Se ejecuta justo después de que la vista se ha creado.
+    // Es el lugar más seguro para configurar botones, listas y observadores.
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -78,7 +81,7 @@ class DetallesFragment : Fragment() {
         //isChecked → me quedo solo con el booleano que necesito
         binding.switchVisto.setOnCheckedChangeListener { _, isChecked ->
 
-            // ? Le dice al compilador: "Solo continúa con lo que sigue si el objeto  no es null
+            // ? Le dice al compilador: Solo continúa con lo que sigue si el objeto  no es null
             //let es una de las funciones de ámbito
             // Función: Ejecuta el bloque de código definido dentro de sus llaves ({ ... })
             // solo si el operador ?. permitió la llamada (es decir, si episodio no era null)
@@ -86,39 +89,13 @@ class DetallesFragment : Fragment() {
             episodio?.let { ep ->
                 ep.visto = isChecked
 
-
-
-               // Obtenemos el UID del usuario (ya está logueado)
-                //Elvis Operator, si el valor de la izquierda es nulo, usa el valor de la derecha
-                //return@setOnCheckedChangeListener Detiene la ejecución del bloque de código  y sale de él inmediatamente.
-                val uidUsuario = FirebaseAuth.getInstance().currentUser?.uid
-                    ?: return@setOnCheckedChangeListener
-
-                // Crea un mapa mutable con los datos del episodio a guardar en Firestore
-                val datosEpisodio = hashMapOf(
-                    "name" to ep.name,         // Clave "name": almacena el nombre del episodio (de la variable ep)
-                    "episode" to ep.episode,   // Clave "episode": almacena el código del episodio (ej. "S01E01")
-                    "air_date" to ep.air_date, // Clave "air_date": almacena la fecha de emisión del episodio
-                    "viewed" to isChecked      // Clave "viewed": almacena true si está marcado como visto, false si no
-                )
-
-                // Accede a la base de datos Firestore
-                firestore
-                    .collection("Usuarios")                  // Selecciona la colección principal "Usuarios"
-                    .document(uidUsuario)                    // Selecciona el documento del usuario actual usando su UID
-                    .collection("episodios_vistos")          // Accede a la subcolección "episodios_vistos" dentro del usuario
-                    .document(ep.id.toString())              // Selecciona (o crea) un documento con el ID del episodio convertido a texto
-                    .set(datosEpisodio)                                     // Guarda todo el mapa como datos del documento (sobrescribe si ya existe)
-
+                actualizarEpisodioVisto(ep,ep.visto)
 
             }
         }
 
-
         //---------CONFIGURANDO EL ADAPATADOR
-
         personajesAdapter = AdaptadorPersonajes { personaje ->
-
         }
         binding.personajesRecyclerview.layoutManager =
             GridLayoutManager(requireContext(), 2)
@@ -128,63 +105,101 @@ class DetallesFragment : Fragment() {
 
     }
 
+    private fun actualizarEpisodioVisto(ep: Episodio, visto: Boolean) {
 
-    fun cargarPersonajes() {
+        //  OBTENER IDENTIFICADOR: Verificamos que el usuario esté autenticado.
+        // Si no hay sesión iniciada (null), el operador Elvis (?:) corta la función con el return.
+        val uidUsuario = FirebaseAuth.getInstance().currentUser?.uid
+            ?: return
 
-        //===========================================
-        // BLOQUE CONFIGURACIÓN DE RETROFIT
-        // Creamos el "servicio" a partir de la interfaz ApiService
-        val api = RetrofitClient.instance.create(ApiService::class.java)
+        // DEFINIR RUTA (Referencia): Creamos la "dirección" exacta del documento.
+        // Usamos el ID del episodio como nombre del documento para que sea único y fácil de encontrar/borrar.
+        //La variable ref: Solo define la dirección. No crea nada en la nube por sí sola.
+        // El método .set(): Es el que construye la ruta. Si las colecciones o documentos no existen,
+        //  Firebase los crea automáticamente al recibir los datos.
+        val ref = firestore
+            .collection("usuarios")           // Carpeta principal de usuarios
+            .document(uidUsuario)             // Documento del usuario actual
+            .collection("episodios_vistos")   // Subcolección de su historial
+            .document(ep.id.toString())       // El archivo específico del episodio
 
-        //extraigo la lista de urls qeu contiene le atributo character
-        val listaUrlsPersonajes = episodio?.characters
+        // LÓGICA DE ACTUALIZACIÓN:
+        // Aquí decidimos si guardamos información o la eliminamos de la nube.
+        if (visto) {
+            // Si el switch se activó (visto == true), preparamos los datos para guardar.
+            //El hashMapOf: Es el contenido del paquete.
+            // Firestore: Lo guarda como campos y valores (parecido a un JSON, pero más organizado).
+            val datos = hashMapOf(
+                "name" to ep.name,
+                "episode" to ep.episode,
+                "air_date" to ep.air_date,
 
+            )
 
-        //Usamos el signo '?' porque 'listaUrlsPersonajes' podría ser nula.
-        //'.map' recorre cada URL de la lista (una por una).
-        //'substringAfterLast("/")' busca la última barra inclinada "/"
-        // y se queda con todo lo que hay despues y lo guarda en una lista
-        val idsList = listaUrlsPersonajes?.map { url ->
-            url.substringAfterLast("/")
+            ref.set(datos)      // marcar como visto
+        } else {
+            ref.delete()        // desmarcar → borrar
         }
-
-        //“Si es null, salgo de la función.”
-        var ids = idsList?.joinToString(",") ?: return
+    }
 
 
-        api.getPersonajes(ids).enqueue(object : Callback<List<Personaje>> {
 
-            // -----------------------------------------
-            // RESPUESTA CORRECTA DEL SERVIDOR
-            // -----------------------------------------
+fun cargarPersonajes() {
 
-            override fun onResponse(
-                call: Call<List<Personaje>>,
-                response: Response<List<Personaje>>
-            ) {
-                //Verifica si la respuesta del servidor fue exitosa (código 200 OK).
-                if (response.isSuccessful) {
+    //===========================================
+    // BLOQUE CONFIGURACIÓN DE RETROFIT
+    // Creamos el "servicio" a partir de la interfaz ApiService
+    val api = RetrofitClient.instance.create(ApiService::class.java)
 
-                    // response.body()' contiene los datos reales (la lista de personajes).
-                    // Usamos '.let { ... }' para ejecutar el código solo si los datos NO son nulos.
-                    response.body()?.let { datosRecibidos ->
+    //extraigo la lista de urls qeu contiene le atributo character
+    val listaUrlsPersonajes = episodio?.characters
 
-                        // Se lo enviamos al adaptador para que actualice la lista en la pantalla.
-                        personajesAdapter.setData(datosRecibidos)
-                    }
+
+    //Usamos el signo '?' porque 'listaUrlsPersonajes' podría ser nula.
+    //'.map' recorre cada URL de la lista (una por una).
+    //'substringAfterLast("/")' busca la última barra inclinada "/"
+    // y se queda con todo lo que hay despues y lo guarda en una lista
+    val idsList = listaUrlsPersonajes?.map { url ->
+        url.substringAfterLast("/")
+    }
+
+    //“Si es null, salgo de la función.”
+    var ids = idsList?.joinToString(",") ?: return
+
+
+    api.getPersonajes(ids).enqueue(object : Callback<List<Personaje>> {
+
+        // -----------------------------------------
+        // RESPUESTA CORRECTA DEL SERVIDOR
+        // -----------------------------------------
+
+        override fun onResponse(
+            call: Call<List<Personaje>>,
+            response: Response<List<Personaje>>
+        ) {
+            //Verifica si la respuesta del servidor fue exitosa (código 200 OK).
+            if (response.isSuccessful) {
+
+                // response.body()' contiene los datos reales (la lista de personajes).
+                // Usamos '.let { ... }' para ejecutar el código solo si los datos NO son nulos.
+                response.body()?.let { datosRecibidos ->
+
+                    // Se lo enviamos al adaptador para que actualice la lista en la pantalla.
+                    personajesAdapter.setData(datosRecibidos)
                 }
             }
+        }
 
-            override fun onFailure(call: Call<List<Personaje>>, t: Throwable) {
-                Toast.makeText(
-                    requireContext(),
-                    "Fallo de red: ${t.message}",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-        })
+        override fun onFailure(call: Call<List<Personaje>>, t: Throwable) {
+            Toast.makeText(
+                requireContext(),
+                "Fallo de red: ${t.message}",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    })
 
 
-    }
+}
 }
 
