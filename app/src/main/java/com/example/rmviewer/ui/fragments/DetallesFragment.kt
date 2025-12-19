@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.rmviewer.R
 import com.example.rmviewer.adapter.AdaptadorPersonajes
 import com.example.rmviewer.databinding.FragmentDetallesBinding
 import com.example.rmviewer.model.Episodio
@@ -63,6 +64,9 @@ class DetallesFragment : Fragment() {
     // Es el lugar más seguro para configurar botones, listas y observadores.
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //Titulo del toolbar
+        requireActivity().title = getString(R.string.title_detalles)
 
         // Recupera el objeto 'Episodio' que fue enviado a este fragmento/actividad.
         episodio = arguments?.getParcelable("episodio")

@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:paddingBottom="8dp"
-            android:text="Nombre del persojane"
+            android:text="@string/nombre_personaje"
             android:textSize="18sp"
             android:textStyle="bold" />
 

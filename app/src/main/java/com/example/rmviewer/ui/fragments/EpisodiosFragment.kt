@@ -72,6 +72,8 @@ class EpisodiosFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //Titulo del toolbar
+        requireActivity().title = getString(R.string.title_episodios)
 
         // CONFIGURACIÓN DEL RECYCLER
 
@@ -152,6 +154,25 @@ class EpisodiosFragment : Fragment() {
         cargarEpisodios()
 
     }
+
+    override fun onResume() {
+        // LLAMADA OBLIGATORIA: Ejecuta la lógica base de Android para restaurar el Fragment.
+        super.onResume()
+
+        // REINICIO DE FILTROS: Al volver a la pantalla, nos aseguramos de que
+        // la variable de control esté en 'false' para no confundir al usuario.
+        mostrandoSoloVistos = false
+
+        // ACTUALIZACIÓN VISUAL: Llamamos a la función que cambia el aspecto del botón
+        //
+        botnsVistosResaltado()
+
+        // RESTAURACIÓN DE DATOS: Volvemos a pasar la lista completa al adaptador.
+        // Esto es vital si el usuario estaba filtrando y sale de la pantalla;
+        // al volver, espera ver la lista completa de nuevo.
+        adaptador.setData(listaEpisodios)
+    }
+
 
     // FUNCIÓN QUE CARGA UNA PÁGINA DE EPISODIOS
     fun cargarEpisodios() {

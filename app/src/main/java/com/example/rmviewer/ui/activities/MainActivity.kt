@@ -4,10 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.fragment.NavHostFragment
 import com.example.rmviewer.databinding.ActivityMainBinding
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.preference.PreferenceManager
 import com.example.rmviewer.R
 import com.google.firebase.auth.FirebaseAuth
 
@@ -55,6 +57,23 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+        //ACCESO A PREFERENCIAS: Abrimos el "archivo" de configuración de la app.
+        // getDefaultSharedPreferences utiliza el archivo de ajustes por defecto .
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+
+        // LECTURA: Buscamos el valor guardado con la clave "pref_dark_mode".
+        // Si el usuario nunca ha tocado el ajuste, por defecto (false) permanece modo claro.
+        val darkModeEnabled = prefs.getBoolean("pref_dark_mode", false)
+
+        // APLICACIÓN DEL TEMA:
+        if (darkModeEnabled) {
+            // Si es true, forzamos a la app a usar el recurso 'values-night' .
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            // Si es false, forzamos el modo normal .
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -76,7 +95,7 @@ class MainActivity : AppCompatActivity() {
         // Obtiene el controlador de navegación para cambiar de Fragments.
         val navController = navHostFragment.navController
 
-        // Establece la Toolbar como la barra de acción de la Activity (¡Solo una vez!)
+        // Establece la Toolbar como la barra de acción de la Activity
         setSupportActionBar(toolbar)
 
         // Desactiva la flecha de navegación por defecto que el sistema podría intentar dibujar.
@@ -122,14 +141,12 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
 
-
                 R.id.nav_episodios -> {
 
                     // popBackStack' se encarga de "limpiar" el camino de vuelta.
                     // En lugar de abrir una pantalla nueva, busca si 'episodiosFragment' ya estaba abierto.
                     navController.popBackStack(
                         R.id.episodiosFragment, // El destino al que queremos regresar.
-
                         // Quiere decir: "Vuelve hasta episodiosFragment, pero NO lo cierres a él".
                         // Si fuera 'true', también cerraría episodiosFragment.
                         false
@@ -144,7 +161,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.nav_ajustes -> {
-                    navController.navigate(R.id.ajustesFragment)
+                    navController.navigate(R.id.preferenciasFragment)
                     drawerLayout.close()
                     true
                 }

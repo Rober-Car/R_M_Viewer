@@ -56,6 +56,7 @@ dependencies {
 	implementation(libs.material)
 	implementation(libs.androidx.activity)
 	implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.preference.ktx)
     testImplementation(libs.junit)
 	androidTestImplementation(libs.androidx.junit)
 	androidTestImplementation(libs.androidx.espresso.core)
@@ -67,14 +68,8 @@ dependencies {
 	implementation("com.google.firebase:firebase-database-ktx:20.3.1")
     implementation("com.github.bumptech.glide:glide:4.16.0")
 	implementation("com.google.firebase:firebase-firestore")
-
-
-
-
-
-
-
-
+    // librería MPAndroidChart,para crear gráficos y visualizaciones en Android.
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
 
 }

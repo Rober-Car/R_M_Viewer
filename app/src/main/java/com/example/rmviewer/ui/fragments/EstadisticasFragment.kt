@@ -1,13 +1,18 @@
 package com.example.rmviewer.ui.fragments
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import com.example.rmviewer.R
 import com.example.rmviewer.databinding.FragmentEstadisticasBinding
 import com.example.rmviewer.model.EpisodiosResponse
+import com.github.mikephil.charting.data.PieData
+import com.github.mikephil.charting.data.PieDataSet
+import com.github.mikephil.charting.data.PieEntry
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
@@ -47,11 +52,16 @@ class EstadisticasFragment : Fragment() {
     }
 
 
+
+
     //(El Cerebro)
     //Esta es la función donde ocurre la magia. Se ejecuta justo después de que la vista se ha creado.
     // Es el lugar más seguro para configurar botones, listas y observadores.
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //Titulo del toolbar
+        requireActivity().title = getString(R.string.title_estadisticas)
 
         contadorEpisodios()
         contadorEpisodiosVistos()
@@ -83,8 +93,7 @@ class EstadisticasFragment : Fragment() {
                     // Accedemos a 'body()', luego al objeto 'info' y finalmente al campo 'count'.
                     // El '!!' se usa porque arriba ya comprobamos que no es nulo, así que es seguro.
                     totalEpisodios = response.body()!!.info.count
-
-
+                    actualizarUI()
                 }
             }
 
@@ -96,7 +105,6 @@ class EstadisticasFragment : Fragment() {
     }
 
     private fun contadorEpisodiosVistos() {
-
 
         //  Si el usuario no está conectado, no podemos saber qué ha visto.
         // Salimos de la función con 'return' para evitar errores.
@@ -123,13 +131,68 @@ class EstadisticasFragment : Fragment() {
     //funcion que muestra en el layout el resultado de los calculos
     private fun actualizarUI() {
 
+        // Si aún no han llegado ambos datos, no pintamos nada
+        if (totalEpisodios == 0) return
+
         //envio datos
-        binding.tvTotalEpisodios.text = totalEpisodios.toString()
-        binding.tvEpisodiosVistos.text = vistos.toString()
+        binding.tvEpisodiosVistos.text = (" Has visto $vistos")
+        binding.tvTotalEpisodios.text =(  " de $totalEpisodios episodios")
+
 
         if (totalEpisodios > 0) {
             val porcentaje = (vistos * 100) / totalEpisodios
-            binding.tvPorcentaje.text = "$porcentaje %"
+            binding.tvPorcentaje.text = "$porcentaje % completado"
+
+            //Llamo a la fucnion que pinta el grafico
+            pintarGrafico()
         }
+    }
+
+    private fun pintarGrafico() {
+
+        val pieChart = binding.pieChart
+
+
+        // isDrawHoleEnabled = false: Convierte el gráfico en un círculo sólido (sin el agujero de "donut").
+        pieChart.isDrawHoleEnabled = false
+
+        // setUsePercentValues(true): Convierte los valores numéricos automáticamente a porcentajes (%).
+        pieChart.setUsePercentValues(true)
+
+        // description.isEnabled = false: Elimina el texto pequeño ("Description Label") de la esquina.
+        pieChart.description.isEnabled = false
+
+        // legend.isEnabled = false: Oculta el cuadro de leyendas (cuadritos de colores con texto).
+        pieChart.legend.isEnabled = false
+
+        // Configura el color y tamaño de los nombres ("Vistos"/"No vistos") dentro de las rebanadas.
+        pieChart.setEntryLabelColor(Color.BLACK)
+        pieChart.setEntryLabelTextSize(14f)
+
+        // --- PREPARACIÓN DE DATOS ---
+        // Calculamos los dos sectores: los episodios ya vistos y la resta para los restantes.
+        val entries = listOf(
+            PieEntry(vistos.toFloat(), "Vistos"),
+            PieEntry((totalEpisodios - vistos).toFloat(), "No vistos")
+        )
+
+        // .apply nos permite configurar el objeto dataSet de forma limpia sin repetir su nombre.
+        val dataSet = PieDataSet(entries, "").apply {
+            // Asignamos colores específicos a cada sector desde tu archivo colors.xml.
+            colors = listOf(
+                ContextCompat.getColor(requireContext(), R.color.verde_neon),
+                ContextCompat.getColor(requireContext(), R.color.azul_rm)
+            )
+            // Estilo de los números porcentuales que se pintan sobre el gráfico.
+            valueTextSize = 16f
+            valueTextColor = Color.BLACK
+        }
+
+        // --- APLICACIÓN FINAL ---
+        // Unimos los datos configurados al componente de la vista.
+        pieChart.data = PieData(dataSet)
+
+        // .invalidate(): Función vital. Fuerza al gráfico a redibujarse para mostrar los cambios.
+        pieChart.invalidate()
     }
 }

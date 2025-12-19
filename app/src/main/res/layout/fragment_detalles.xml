@@ -12,7 +12,7 @@
         android:id="@+id/nombre_episodio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="nombre" />
+        android:text="@string/nombre" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,21 +24,21 @@
             android:id="@+id/codigo_episodio"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="codigo" />
+            android:layout_weight="0.5"
+            android:text="@string/codigo" />
 
         <TextView
             android:id="@+id/fecha_emision"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="fecha" />
+            android:text="@string/fecha" />
 
         <Switch
             android:id="@+id/switchVisto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Episodio visto"
+            android:text="@string/vistos"
             android:thumbTint="@color/switch_thumb"
             android:trackTint="@color/switch_track"/>
 
@@ -49,7 +49,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:text="Personajes del episodio"/>
+        android:text="@string/personajes"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/personajes_recyclerview"

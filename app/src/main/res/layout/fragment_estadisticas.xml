@@ -5,26 +5,40 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="32dp"
-    tools:context=".ui.fragments.DetallesFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:id="@+id/tvTotalEpisodios"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+    tools:context=".ui.fragments.DetallesFragment"
+    android:layout_gravity="center"
+    >
 
     <TextView
         android:id="@+id/tvEpisodiosVistos"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:gravity="center"
+        android:text="@string/vistos" />
+
+    <TextView
+        android:id="@+id/tvTotalEpisodios"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/Total" />
+
+
 
     <TextView
         android:id="@+id/tvPorcentaje"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:gravity="center"
+        android:text="@string/porcentaje"
+        android:layout_marginBottom="40dp"/>
+
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/pieChart"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="24dp" />
+
 
 
 </LinearLayout>

@@ -28,10 +28,10 @@
         android:label="fragment_estadisticas"
         tools:layout="@layout/fragment_estadisticas" />
     <fragment
-        android:id="@+id/ajustesFragment"
-        android:name="com.example.rmviewer.ui.fragments.AjustesFragment"
-        android:label="fragment_ajustes"
-        tools:layout="@layout/fragment_ajustes" />
+        android:id="@+id/preferenciasFragment"
+        android:name="com.example.rmviewer.ui.fragments.PreferenciasFragment"
+        android:label="AJUSTES"
+      />
     <fragment
         android:id="@+id/acercaFragment"
         android:name="com.example.rmviewer.ui.fragments.AcercaFragment"
