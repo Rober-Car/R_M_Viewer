@@ -22,7 +22,13 @@ class AcercaFragment : Fragment() {
 
         binding = FragmentAcercaBinding.inflate(inflater, container, false) // Inflar layout
         return binding.root
-        requireActivity().title = getString(R.string.title_acerca)
+
+	}
+
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
+
+		requireActivity().title = getString(R.string.title_acerca)
 	}
 
 

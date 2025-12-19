@@ -1,17 +1,19 @@
 package com.example.rmviewer.ui.activities
 
+import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.navigation.fragment.NavHostFragment
-import com.example.rmviewer.databinding.ActivityMainBinding
-import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.PreferenceManager
 import com.example.rmviewer.R
+import com.example.rmviewer.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,9 +23,42 @@ class MainActivity : AppCompatActivity() {
     // FirebaseAuth para comprobar sesión del usuario
     private lateinit var auth: FirebaseAuth
 
+    // ----------------------------------------------------
+    // APLICACIÓN DEL IDIOMA (ANTES DE onCreate)
+    // ----------------------------------------------------
+    override fun attachBaseContext(newBase: Context) {
+
+        // ACCESO A PREFERENCIAS:
+        // Leemos el archivo de ajustes donde se guarda el idioma seleccionado
+        val prefs = PreferenceManager.getDefaultSharedPreferences(newBase)
+
+        // RECUPERACIÓN:
+        // Obtenemos el código del idioma ("es" o "en")
+        val idioma = prefs.getString("pref_language", "es") ?: "es"
+
+        // Creamos el objeto Locale con el idioma elegido
+        val locale = Locale(idioma)
+        Locale.setDefault(locale)
+
+        // Obtenemos la configuración actual del sistema
+        val config = Configuration(newBase.resources.configuration)
+
+        // Forzamos el idioma de la app ignorando el idioma del sistema
+        config.setLocale(locale)
+
+        // Creamos un nuevo contexto con esta configuración
+        val context = newBase.createConfigurationContext(config)
+
+        // Pasamos el contexto ya modificado a la Activity
+        super.attachBaseContext(context)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // ----------------------------------------------------
+        // AUTENTICACIÓN
+        // ----------------------------------------------------
 
         // Es un estatico qeu devuele un objeto unico (singleton) del servicio de autentificacion de firebase
         // Con esa instancia puedes:
@@ -57,53 +92,45 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        //ACCESO A PREFERENCIAS: Abrimos el "archivo" de configuración de la app.
-        // getDefaultSharedPreferences utiliza el archivo de ajustes por defecto .
+        // ----------------------------------------------------
+        // TEMA OSCURO / CLARO
+        // ----------------------------------------------------
+
+        // ACCESO A PREFERENCIAS: Abrimos el "archivo" de configuración de la app.
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
 
         // LECTURA: Buscamos el valor guardado con la clave "pref_dark_mode".
-        // Si el usuario nunca ha tocado el ajuste, por defecto (false) permanece modo claro.
         val darkModeEnabled = prefs.getBoolean("pref_dark_mode", false)
 
         // APLICACIÓN DEL TEMA:
         if (darkModeEnabled) {
-            // Si es true, forzamos a la app a usar el recurso 'values-night' .
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else {
-            // Si es false, forzamos el modo normal .
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
 
-
+        // ----------------------------------------------------
+        // VIEW BINDING
+        // ----------------------------------------------------
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
 
         // ----------------------------------------------------
         // OBTENCIÓN DE VISTAS
         // ----------------------------------------------------
-        val toolbar: Toolbar = binding.toolbar
+        val toolbar = binding.toolbar
         drawerLayout = binding.drawerLayout
 
-        // ----------------------------------------------------------------------------------
-        // INICIO: BLOQUE DE CONFIGURACIÓN DEL NAVIGATION DRAWER
-        // ----------------------------------------------------------------------------------
-
-        // Obtiene el Fragment que actúa como Host para la navegación.
+        // ----------------------------------------------------
+        // NAVIGATION DRAWER
+        // ----------------------------------------------------
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        // Obtiene el controlador de navegación para cambiar de Fragments.
         val navController = navHostFragment.navController
 
-        // Establece la Toolbar como la barra de acción de la Activity
         setSupportActionBar(toolbar)
-
-        // Desactiva la flecha de navegación por defecto que el sistema podría intentar dibujar.
-        // Esto asegura que el Toggle tenga el control completo del icono.
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
-        // Crea el objeto ActionBarDrawerToggle .
-        // Este objeto sincroniza el icono de hamburguesa con el DrawerLayout.
         val toggle = ActionBarDrawerToggle(
             this,
             drawerLayout,
@@ -112,28 +139,15 @@ class MainActivity : AppCompatActivity() {
             R.string.navigation_drawer_close
         )
 
-        // Asocia el Toggle al DrawerLayout para escuchar eventos y animar el icono.
         drawerLayout.addDrawerListener(toggle)
-
-        // Sincroniza el estado inicial. Esto es lo que dibuja la hamburguesa y prepara la animación.
         toggle.syncState()
 
-        // --------------------------------------------------------------------------------
-        // Listener del NavigationView: conecta los ítems del menú lateral con acciones.
-        // --------------------------------------------------------------------------------
-
-        // 'item' es el parámetro que recibe la lambda.
-        // Representa el MenuItem que el usuario ha pulsado en el NavigationView.
-        // Es un objeto de tipo MenuItem, con propiedades como title, icon y itemId.
-        binding.navView.setNavigationItemSelectedListener {
-
-            // 'item.itemId' devuelve el identificador único del ítem pulsado.
-            // Ese id corresponde al que definiste en tu menú XML (ej. R.id.nav_episodios).
-            // Sirve para saber exactamente qué opción del menú se seleccionó.
-                item ->
+        // ----------------------------------------------------
+        // MENÚ LATERAL
+        // ----------------------------------------------------
+        binding.navView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
 
-                // Cerrar sesión: se desloguea al usuario y se redirige al LoginActivity.
                 R.id.nav_logout -> {
                     auth.signOut()
                     startActivity(Intent(this, LoginActivity::class.java))
@@ -142,21 +156,8 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.nav_episodios -> {
-
-                    // popBackStack' se encarga de "limpiar" el camino de vuelta.
-                    // En lugar de abrir una pantalla nueva, busca si 'episodiosFragment' ya estaba abierto.
-                    navController.popBackStack(
-                        R.id.episodiosFragment, // El destino al que queremos regresar.
-                        // Quiere decir: "Vuelve hasta episodiosFragment, pero NO lo cierres a él".
-                        // Si fuera 'true', también cerraría episodiosFragment.
-                        false
-                    )
-
-                    //  Una vez que ya ordenamos la navegación, cerramos el menú lateral (Drawer)
-                    // para que no tape la pantalla.
+                    navController.popBackStack(R.id.episodiosFragment, false)
                     drawerLayout.close()
-
-                    // Devolvemos 'true' para decirle al sistema que ya procesamos el clic correctamente.
                     true
                 }
 
@@ -180,10 +181,6 @@ class MainActivity : AppCompatActivity() {
 
                 else -> false
             }
-
         }
-
     }
-
-
 }

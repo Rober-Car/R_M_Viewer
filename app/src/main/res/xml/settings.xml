@@ -4,7 +4,7 @@
     <PreferenceCategory
         android:title="@string/pref_general">
 
-        <SwitchPreference
+        <androidx.preference.SwitchPreferenceCompat
             android:key="pref_dark_mode"
             android:title="@string/pref_modo_oscuro"
             android:defaultValue="false" />
@@ -15,7 +15,7 @@
 
         <ListPreference
             android:key="pref_language"
-            android:title="Idioma"
+            android:title="@string/pref_idioma"
             android:entries="@array/pref_language_entries"
             android:entryValues="@array/pref_language_values"
             android:defaultValue="es"
