@@ -5,14 +5,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="32dp"
-    tools:context=".ui.fragments.DetallesFragment">
+    tools:context=".ui.fragments.DetallesFragment"
+    >
 
 
     <TextView
         android:id="@+id/nombre_episodio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/nombre" />
+        android:text="@string/nombre"
+        style="@style/textonegritaTamañoMedio2"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,14 +27,17 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:text="@string/codigo" />
+            android:text="@string/codigo"
+            style="@style/textonegritaTamañoMedio2"
+            />
 
         <TextView
             android:id="@+id/fecha_emision"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/fecha" />
+            android:text="@string/fecha"
+            style="@style/textonegritaTamañoMedio2"/>
 
         <Switch
             android:id="@+id/switchVisto"
@@ -49,7 +54,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:text="@string/personajes"/>
+        android:text="@string/personajes"
+        style="@style/textonegritaTamañoMedio2"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/personajes_recyclerview"

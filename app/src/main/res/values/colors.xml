@@ -6,8 +6,16 @@
     <color name="verde_neon">#00FF7F</color>
     <color name="azul_rm">#00B5CC</color>
     <color name="azul_oscuro">#0B1E2D</color>
-    <color name="verde_neon">#00FF9C</color>
     <color name="amarillo">#FFEB3B</color>
 
+    <!-- FONDOS OSCUROS-->
+    <color name="bg_dark">#121212</color>
+    <color name="surface_dark">#1E1E1E</color>
 
+    <!-- VERDE NEÓN ADAPTADO A OSCURO -->
+    <color name="verde_neon_dark">#00E5A0</color>
+
+    <!-- TEXTO -->
+    <color name="text_primary_dark">#FFFFFF</color>
+    <color name="text_secondary_dark">#B0B0B0</color>
 </resources>

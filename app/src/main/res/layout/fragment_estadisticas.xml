@@ -14,13 +14,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="@string/vistos" />
+        android:text="@string/vistos"
+        style="@style/textonegritaTamañoMedio"
+        />
 
     <TextView
         android:id="@+id/tvTotalEpisodios"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
+        style="@style/textonegritaTamañoMedio"
         android:text="@string/Total" />
 
 
@@ -31,6 +34,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="@string/porcentaje"
+        style="@style/textonegritaTamañoMedio"
         android:layout_marginBottom="40dp"/>
 
     <com.github.mikephil.charting.charts.PieChart

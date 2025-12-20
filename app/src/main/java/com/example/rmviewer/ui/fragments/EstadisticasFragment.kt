@@ -180,8 +180,8 @@ class EstadisticasFragment : Fragment() {
         val dataSet = PieDataSet(entries, "").apply {
             // Asignamos colores específicos a cada sector desde tu archivo colors.xml.
             colors = listOf(
-                ContextCompat.getColor(requireContext(), R.color.verde_neon),
-                ContextCompat.getColor(requireContext(), R.color.azul_rm)
+                ContextCompat.getColor(requireContext(), R.color.azul_rm),
+                ContextCompat.getColor(requireContext(), R.color.azul_oscuro)
             )
             // Estilo de los números porcentuales que se pintan sobre el gráfico.
             valueTextSize = 16f

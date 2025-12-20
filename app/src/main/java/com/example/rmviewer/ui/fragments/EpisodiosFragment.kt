@@ -51,6 +51,8 @@ class EpisodiosFragment : Fragment() {
 
     private val firestore = FirebaseFirestore.getInstance()
 
+    private var esImagenNueva = false
+
 
 
 
@@ -103,19 +105,25 @@ class EpisodiosFragment : Fragment() {
 
         // Conectamos el adapter al RecyclerView
         binding.episodiosRecyclerview.adapter = adaptador
-
-        // sellcionar capituos vistos y no vistos
         binding.ivVistos.setOnClickListener {
-            mostrandoSoloVistos = true
+
+            // TOGGLE: cambia el estado
+            mostrandoSoloVistos = !mostrandoSoloVistos
+
+            // Actualiza la lista según el estado
             actualizarLista()
+
+            // Actualiza bordes / estado visual
             botnsVistosResaltado()
+
+            // Cambia la imagen según el estado
+            if (mostrandoSoloVistos) {
+                binding.ivVistos.setImageResource(R.drawable.rick_episodios_vistos2)
+            } else {
+                binding.ivVistos.setImageResource(R.drawable.rick_episodios_no_vistos2)
+            }
         }
 
-        binding.ivTodos.setOnClickListener {
-            mostrandoSoloVistos = false
-            actualizarLista()
-            botnsVistosResaltado()
-        }
 
             // Accedemos al RecyclerView de episodios a través del binding.
             //'addOnScrollListener' añade un "vigilante" que observa cada movimiento de la lista.
@@ -302,10 +310,10 @@ class EpisodiosFragment : Fragment() {
     private fun botnsVistosResaltado() {
         if (mostrandoSoloVistos) {
             binding.ivVistos.setBackgroundResource(R.drawable.borde_activo)
-            binding.ivTodos.setBackgroundResource(R.drawable.borde_inactivo)
+
         } else {
             binding.ivVistos.setBackgroundResource(R.drawable.borde_inactivo)
-            binding.ivTodos.setBackgroundResource(R.drawable.borde_activo)
+
         }
     }
 
