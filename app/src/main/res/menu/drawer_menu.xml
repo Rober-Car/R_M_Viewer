@@ -3,18 +3,18 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_episodios"
-            android:title="Episodios" />
+            android:title="@string/menu_episodios" />
         <item
             android:id="@+id/nav_Estadisticas"
-            android:title="Estadisticas" />
+            android:title="@string/menu_estadisticas" />
         <item
             android:id="@+id/nav_ajustes"
-            android:title="Ajustes" />
+            android:title="@string/menu_ajustes" />
         <item
             android:id="@+id/nav_acerca_de"
-            android:title="Acerca de" />
+            android:title="@string/menu_acerca_de" />
         <item
             android:id="@+id/nav_logout"
-            android:title="Cerrar sesion"/>
+            android:title="@string/menu_logout"/>
     </group>
 </menu>

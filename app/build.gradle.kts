@@ -70,6 +70,7 @@ dependencies {
 	implementation("com.google.firebase:firebase-firestore")
     // librería MPAndroidChart,para crear gráficos y visualizaciones en Android.
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
 
 
 }

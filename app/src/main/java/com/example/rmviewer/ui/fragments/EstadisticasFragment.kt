@@ -135,13 +135,13 @@ class EstadisticasFragment : Fragment() {
         if (totalEpisodios == 0) return
 
         //envio datos
-        binding.tvEpisodiosVistos.text = (" Has visto $vistos")
-        binding.tvTotalEpisodios.text =(  " de $totalEpisodios episodios")
+        binding.tvEpisodiosVistos.text = getString(R.string.stats_vistos, vistos)
+        binding.tvTotalEpisodios.text =getString(R.string.stats_total, totalEpisodios)
 
 
         if (totalEpisodios > 0) {
             val porcentaje = (vistos * 100) / totalEpisodios
-            binding.tvPorcentaje.text = "$porcentaje % completado"
+            binding.tvPorcentaje.text = getString(R.string.stats_porcentaje, porcentaje)
 
             //Llamo a la fucnion que pinta el grafico
             pintarGrafico()
@@ -172,8 +172,8 @@ class EstadisticasFragment : Fragment() {
         // --- PREPARACIÓN DE DATOS ---
         // Calculamos los dos sectores: los episodios ya vistos y la resta para los restantes.
         val entries = listOf(
-            PieEntry(vistos.toFloat(), "Vistos"),
-            PieEntry((totalEpisodios - vistos).toFloat(), "No vistos")
+            PieEntry(vistos.toFloat(), getString(R.string.chart_label_vistos)),
+            PieEntry((totalEpisodios - vistos).toFloat(), getString(R.string.chart_label_no_vistos))
         )
 
         // .apply nos permite configurar el objeto dataSet de forma limpia sin repetir su nombre.

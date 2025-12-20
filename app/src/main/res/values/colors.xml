@@ -5,6 +5,9 @@
     <color name="green_500">#4CAF50</color>
     <color name="verde_neon">#00FF7F</color>
     <color name="azul_rm">#00B5CC</color>
+    <color name="azul_oscuro">#0B1E2D</color>
+    <color name="verde_neon">#00FF9C</color>
+    <color name="amarillo">#FFEB3B</color>
 
 
 </resources>

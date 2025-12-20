@@ -1,8 +1,6 @@
 package com.example.rmviewer.ui.activities
 
-import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -13,7 +11,7 @@ import androidx.preference.PreferenceManager
 import com.example.rmviewer.R
 import com.example.rmviewer.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
-import java.util.Locale
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,35 +21,7 @@ class MainActivity : AppCompatActivity() {
     // FirebaseAuth para comprobar sesión del usuario
     private lateinit var auth: FirebaseAuth
 
-    // ----------------------------------------------------
-    // APLICACIÓN DEL IDIOMA (ANTES DE onCreate)
-    // ----------------------------------------------------
-    override fun attachBaseContext(newBase: Context) {
 
-        // ACCESO A PREFERENCIAS:
-        // Leemos el archivo de ajustes donde se guarda el idioma seleccionado
-        val prefs = PreferenceManager.getDefaultSharedPreferences(newBase)
-
-        // RECUPERACIÓN:
-        // Obtenemos el código del idioma ("es" o "en")
-        val idioma = prefs.getString("pref_language", "es") ?: "es"
-
-        // Creamos el objeto Locale con el idioma elegido
-        val locale = Locale(idioma)
-        Locale.setDefault(locale)
-
-        // Obtenemos la configuración actual del sistema
-        val config = Configuration(newBase.resources.configuration)
-
-        // Forzamos el idioma de la app ignorando el idioma del sistema
-        config.setLocale(locale)
-
-        // Creamos un nuevo contexto con esta configuración
-        val context = newBase.createConfigurationContext(config)
-
-        // Pasamos el contexto ya modificado a la Activity
-        super.attachBaseContext(context)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -110,13 +80,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         // ----------------------------------------------------
-        // VIEW BINDING
+        // VIEW BINDING inflar vistas
         // ----------------------------------------------------
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         // ----------------------------------------------------
-        // OBTENCIÓN DE VISTAS
+        // CONFIGURAR TOOLBAR Y NAVEGACIÓN
         // ----------------------------------------------------
         val toolbar = binding.toolbar
         drawerLayout = binding.drawerLayout
