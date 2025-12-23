@@ -27,8 +27,8 @@
     <!-- EPISODIOS / DETALLES -->
     <!-- ========================= -->
     <string name="nombre">Nombre</string>
-    <string name="codigo">Codigo</string>
-    <string name="fecha">Fecha</string>
+    <string name="codigo">Codigo:</string>
+    <string name="fecha">Fecha:</string>
     <string name="personajes">Personajes del episodio</string>
     <string name="nombre_personaje">Nombre del personaje</string>
 
