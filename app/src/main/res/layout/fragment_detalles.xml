@@ -4,40 +4,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="32dp"
-    tools:context=".ui.fragments.DetallesFragment"
-    >
-
-
-    <TextView
-        android:id="@+id/nombre_episodio"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/nombre"
-        style="@style/textonegritaTamañoMedio2"/>
+    android:padding="25dp"
+    tools:context=".ui.fragments.DetallesFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="12dp">
+        >
 
-        <TextView
-            android:id="@+id/codigo_episodio"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            android:text="@string/codigo"
-            style="@style/textonegritaTamañoMedio2"
-            />
-
-        <TextView
-            android:id="@+id/fecha_emision"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/fecha"
-            style="@style/textonegritaTamañoMedio2"/>
+    <TextView
+        android:id="@+id/nombre_episodio"
+        style="@style/textonegritaTamañoMedio2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/nombre"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="10dp"
+        />
 
         <Switch
             android:id="@+id/switchVisto"
@@ -45,20 +29,68 @@
             android:layout_height="wrap_content"
             android:text="@string/vistos"
             android:thumbTint="@color/switch_thumb"
-            android:trackTint="@color/switch_track"/>
+            android:trackTint="@color/switch_track" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            style="@style/textonegritaTamañoMedio2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:text="@string/codigo" />
+
+        <TextView
+            android:id="@+id/codigo_episodio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:text="@string/codigo" />
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            style="@style/textonegritaTamañoMedio2"
+            android:text="@string/fecha"/>
+        <TextView
+            android:id="@+id/fecha_emision"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fecha" />
+
+
 
     </LinearLayout>
 
     <TextView
         android:id="@+id/lista_personajes"
+        style="@style/textonegritaTamañoMedio2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:text="@string/personajes"
-        style="@style/textonegritaTamañoMedio2"/>
+        android:layout_marginTop="20dp"
+        android:text="@string/personajes" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/personajes_recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 </LinearLayout>
