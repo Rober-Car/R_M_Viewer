@@ -6,6 +6,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.PreferenceManager
 import com.example.rmviewer.R
@@ -20,6 +21,8 @@ class MainActivity : AppCompatActivity() {
 
     // FirebaseAuth para comprobar sesión del usuario
     private lateinit var auth: FirebaseAuth
+
+    private lateinit var navController: NavController
 
 
 
@@ -96,7 +99,7 @@ class MainActivity : AppCompatActivity() {
         // ----------------------------------------------------
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        val navController = navHostFragment.navController
+         navController = navHostFragment.navController
 
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
