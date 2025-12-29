@@ -19,6 +19,10 @@
     <string name="iniciar_sesion">Iniciar sesión</string>
     <string name="registrarse">Pulsa aqui para el registro</string>
     <string name="volver_a_login">Volver a login</string>
+    <string name="msg_email_invalido">Ingresa un email válido</string>
+    <string name="msg_campos_vacios">Llena todos los campos</string>
+    <string name="inicio_correcto">Inicio de sesión correcto</string>
+    <string name="credenciales_incorrectas">Error: Credenciales incorrectas</string>
 
     <string name="logo">Logo</string>
     <string name="logo_de_registro">Logo de registro</string>

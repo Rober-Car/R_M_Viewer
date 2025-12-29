@@ -20,6 +20,10 @@
     <string name="iniciar_sesion">Sign in</string>
     <string name="registrarse">Tap here to register</string>
     <string name="volver_a_login">Back to login</string>
+    <string name="msg_email_invalido">Enter a valid email</string>
+    <string name="msg_campos_vacios">Fill in all fields</string>
+    <string name="inicio_correcto">Login successful</string>
+    <string name="credenciales_incorrectas">Error: Incorrect credentials</string>
 
     <string name="logo">Logo</string>
     <string name="logo_de_registro">Register logo</string>

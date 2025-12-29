@@ -14,6 +14,7 @@ class RegisterActivity : AppCompatActivity() {
 	private lateinit var binding: ActivityRegisterBinding
 	// FirebaseAuth: instancia para crear usuarios
 	private lateinit var auth: FirebaseAuth
+
 	// Longitud mínima recomendada para la contraseña
 	private val MIN_PASSWORD_LENGTH = 6
 
@@ -26,7 +27,7 @@ class RegisterActivity : AppCompatActivity() {
 
 		// Inicializamos FirebaseAuth
 		//Devuelve un objeto FirebaseAuth que representa la conexión con el servicio de autenticación de Firebase.
-		// Esa instancia es única (singleton) dentro de tu aplicación: siempre que lo llames, obtendrás la misma referencia.
+		// Esa instancia es única (singleton) dentro de la aplicación: siempre que lo llames, obtendrás la misma referencia.
 		//A partir de ahí, puedes usar auth para realizar operaciones como:
 		// Registrar usuarios con email y contraseña.
 		// Iniciar sesión, Cerrar sesión y Consultar el usuario actualmente autenticado (auth.getCurrentUser()).

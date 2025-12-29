@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Patterns
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.rmviewer.R
 import com.example.rmviewer.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
 
@@ -28,21 +29,20 @@ class LoginActivity : AppCompatActivity() {
         // Esa instancia es única (singleton) dentro de tu aplicación: siempre que lo llames, obtendrás la misma referencia.
         //A partir de ahí, puedes usar auth para realizar operaciones como:
         // Registrar usuarios con email y contraseña.
+
         // Iniciar sesión, Cerrar sesión y Consultar el usuario actualmente autenticado (auth.getCurrentUser()).
         auth = FirebaseAuth.getInstance()
-
 
         // ==========================
         // BOTÓN DE LOGIN
         // ==========================
-
         binding.btnLogin.setOnClickListener {
 
             validarLogin()
         }
 
         // ==========================
-        // TEXTO "Registrarse"
+        // TEXTO  CLICABLE "Registrarse"
         // ======================
 
         binding.txtRegisterLogin.setOnClickListener {
@@ -57,7 +57,7 @@ class LoginActivity : AppCompatActivity() {
     // =================== VALDIAR DATOS ===================
 
 
-    // fucnion que valida si los datos estan en la base de datos, deberia validar primero si estan bien escritos?
+    // fucnion que valida si los datos estan en la base de datos
     private fun validarLogin() {
         // Obtener email y contraseña desde los EditText
         val email = binding.edtEmailLogin.text.toString()
@@ -65,7 +65,7 @@ class LoginActivity : AppCompatActivity() {
 
         // 1️⃣ Campos vacíos
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Llena todos los campos", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.msg_campos_vacios), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -75,7 +75,7 @@ class LoginActivity : AppCompatActivity() {
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
 
             //Si el email no es valido, mostramos un mensaje corto en pantalla avisando al usuario
-            Toast.makeText(this, "Ingresa un email válido", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this,getString(R.string.msg_email_invalido) , Toast.LENGTH_SHORT).show()
 
             // Con 'return' detenemos la ejecución del método actual.
             // Así evitamos seguir con el proceso
@@ -100,7 +100,7 @@ class LoginActivity : AppCompatActivity() {
                     val uid = auth.currentUser?.uid
 
                     //Mensaje de confiramcion
-                    Toast.makeText(this, "Inicio de sesión correcto", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.inicio_correcto), Toast.LENGTH_SHORT).show()
 
                     // Intent(...) → objeto que describe una acción: abrir otra Activity.
                     // startActivity(intent) → lanza la nueva Activity (MainActivity).
@@ -113,7 +113,7 @@ class LoginActivity : AppCompatActivity() {
 
                 } else {
                     //   mensaje de error (ej: "La contraseña es incorrecta").
-                    Toast.makeText(this, "Error: Credenciales incorrectas", Toast.LENGTH_SHORT)
+                    Toast.makeText(this, getString(R.string.credenciales_incorrectas), Toast.LENGTH_SHORT)
                         .show()
                 }
             }
