@@ -73,7 +73,7 @@ class DetallesFragment : Fragment() {
 
         // Asegura que el objeto 'episodio' no es nulo antes de intentar usarlo.
         episodio?.let {
-            // // Asigna la cada propiedad a su view
+            // // Asigna  cada propiedad a su view
             binding.nombreEpisodio.text = it.name          // Mostrar nombre
             binding.codigoEpisodio.text = it.episode       // Mostrar código
             binding.fechaEmision.text = it.air_date        // Mostrar fecha

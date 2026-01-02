@@ -45,18 +45,8 @@ class EpisodiosFragment : Fragment() {
     // Lista acumulada de episodios (todas las páginas)
     private val listaEpisodios = mutableListOf<Episodio>()
 
-    //Crea un objeto (database) para gestionar la Base de Datos (guardar/leer datos).
-    // Conéctata la base de datos de Firebase de ESTE proyecto
-    private val database = FirebaseDatabase.getInstance()
 
     private val firestore = FirebaseFirestore.getInstance()
-
-    private var esImagenNueva = false
-
-
-
-
-
 
     private var mostrandoSoloVistos = false
 
@@ -74,6 +64,9 @@ class EpisodiosFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //le damos a la variable el valor actual del switch
+        mostrandoSoloVistos = binding.switchEpisodios.isChecked
+
         //Titulo del toolbar
         requireActivity().title = getString(R.string.title_episodios)
 
@@ -90,7 +83,7 @@ class EpisodiosFragment : Fragment() {
             // Bundle es un contenedor de datos. Sirve para guardar pares clave‑valor y enviarlos
             val bundle = Bundle()
 
-            // Insertar el objeto 'episodio' dentro del BundleUn
+            // Insertar el objeto 'episodio' dentro del Bundle
             //"episodio" es la clave con la que lo recuperarás en el fragment destino
             //episodio debe implementar Parcelable
             bundle.putParcelable("episodio", episodio)
@@ -105,23 +98,15 @@ class EpisodiosFragment : Fragment() {
 
         // Conectamos el adapter al RecyclerView
         binding.episodiosRecyclerview.adapter = adaptador
-        binding.ivVistos.setOnClickListener {
+
+        binding.switchEpisodios.setOnCheckedChangeListener { _, isChecked ->
 
             // TOGGLE: cambia el estado
-            mostrandoSoloVistos = !mostrandoSoloVistos
+            mostrandoSoloVistos = isChecked
 
             // Actualiza la lista según el estado
             actualizarLista()
 
-            // Actualiza bordes / estado visual
-            botnsVistosResaltado()
-
-            // Cambia la imagen según el estado
-            if (mostrandoSoloVistos) {
-                binding.ivVistos.setImageResource(R.drawable.rick_episodios_vistos2)
-            } else {
-                binding.ivVistos.setImageResource(R.drawable.rick_episodios_no_vistos2)
-            }
         }
 
 
@@ -158,22 +143,24 @@ class EpisodiosFragment : Fragment() {
             }
         )
 
-        // Primera carga de episodios (página 1)
+        // Primera carga de episodios
         cargarEpisodios()
+
+
 
     }
 
+    //onResume()¿Para qué sirve? Para re-sincronizar la pantalla cuando el usuario vuelve.
+    //Se ejecuta cada vez que el fragment vuelve a primer plano
+    //al volver de DetallesFragment, al volver de ajustes, atrás, etc.
     override fun onResume() {
         // LLAMADA OBLIGATORIA: Ejecuta la lógica base de Android para restaurar el Fragment.
         super.onResume()
 
         // REINICIO DE FILTROS: Al volver a la pantalla, nos aseguramos de que
         // la variable de control esté en 'false' para no confundir al usuario.
-        mostrandoSoloVistos = false
+        mostrandoSoloVistos = binding.switchEpisodios.isChecked
 
-        // ACTUALIZACIÓN VISUAL: Llamamos a la función que cambia el aspecto del botón
-        //
-        botnsVistosResaltado()
 
         // RESTAURACIÓN DE DATOS: Volvemos a pasar la lista completa al adaptador.
         // Esto es vital si el usuario estaba filtrando y sale de la pantalla;
@@ -222,6 +209,8 @@ class EpisodiosFragment : Fragment() {
 
                         //acumulamos los episodiso de cada pagina
                         listaEpisodios.addAll(episodios)
+
+                        adaptador.setData(listaEpisodios)
 
                         aplicarVistosDesdeFirestore(listaEpisodios)
 
@@ -306,15 +295,5 @@ class EpisodiosFragment : Fragment() {
         }
     }
 
-
-    private fun botnsVistosResaltado() {
-        if (mostrandoSoloVistos) {
-            binding.ivVistos.setBackgroundResource(R.drawable.borde_activo)
-
-        } else {
-            binding.ivVistos.setBackgroundResource(R.drawable.borde_inactivo)
-
-        }
-    }
 
 }

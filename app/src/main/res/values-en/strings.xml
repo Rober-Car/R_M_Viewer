@@ -42,7 +42,7 @@
     <!-- ========================= -->
     <!-- STATISTICS -->
     <!-- ========================= -->
-    <string name="vistos">Viewed</string>
+    <string name="vistos">VIEWED</string>
     <string name="Total">Total episodes</string>
     <string name="porcentaje">Viewed percentage</string>
 
@@ -99,5 +99,7 @@
     <string name="stats_vistos">You have seen %1$d</string>
     <string name="stats_total">of %1$d episodes</string>
     <string name="stats_porcentaje">%1$d%% completed</string>
+    <string name="todos_episodios">ALL</string>
+
 
 </resources>
