@@ -25,7 +25,7 @@
     <string name="msg_campos_vacios">Llena todos los campos</string>
     <string name="inicio_correcto">Inicio de sesión correcto</string>
     <string name="credenciales_incorrectas">Error: Credenciales incorrectas</string>
-
+    <string name="btn_aceptar">Aceptar</string>
     <string name="logo">Logo</string>
     <string name="logo_de_registro">Logo de registro</string>
 
@@ -65,7 +65,6 @@
     <string name="pref_general">Selecciona modo</string>
     <string name="pref_idioma">Selecciona idioma</string>
     <string name="pref_modo_oscuro">Modo</string>
-
     <string name="idioma_es">Español</string>
     <string name="idioma_en">Ingles</string>
 
@@ -97,6 +96,7 @@
     <string name="menu_acerca_de">Acerca de</string>
     <string name="menu_logout">Cerrar sesión</string>
     <string name="todos_episodios">TODOS</string>
+
 
 
 </resources>

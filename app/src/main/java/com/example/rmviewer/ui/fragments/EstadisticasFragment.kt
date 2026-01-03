@@ -153,6 +153,7 @@ class EstadisticasFragment : Fragment() {
         val pieChart = binding.pieChart
 
 
+
         // isDrawHoleEnabled = false: Convierte el gráfico en un círculo sólido (sin el agujero de "donut").
         pieChart.isDrawHoleEnabled = false
 
@@ -181,7 +182,7 @@ class EstadisticasFragment : Fragment() {
             // Asignamos colores específicos a cada sector desde tu archivo colors.xml.
             colors = listOf(
                 ContextCompat.getColor(requireContext(), R.color.azul_rm),
-                ContextCompat.getColor(requireContext(), R.color.azul_oscuro)
+                ContextCompat.getColor(requireContext(), R.color.amarillo)
             )
             // Estilo de los números porcentuales que se pintan sobre el gráfico.
             valueTextSize = 16f
