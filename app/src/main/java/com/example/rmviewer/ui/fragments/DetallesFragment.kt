@@ -137,7 +137,7 @@ class DetallesFragment : Fragment() {
                 "name" to ep.name,
                 "episode" to ep.episode,
                 "air_date" to ep.air_date,
-
+                "id" to ep.id
             )
 
             ref.set(datos)      // marcar como visto

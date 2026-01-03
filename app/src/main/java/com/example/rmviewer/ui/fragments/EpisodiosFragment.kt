@@ -110,8 +110,8 @@ class EpisodiosFragment : Fragment() {
         }
 
 
-            // Accedemos al RecyclerView de episodios a través del binding.
-            //'addOnScrollListener' añade un "vigilante" que observa cada movimiento de la lista.
+        // Accedemos al RecyclerView de episodios a través del binding.
+        //'addOnScrollListener' añade un "vigilante" que observa cada movimiento de la lista.
         binding.episodiosRecyclerview.addOnScrollListener(
             object : RecyclerView.OnScrollListener() {
 
@@ -147,7 +147,6 @@ class EpisodiosFragment : Fragment() {
         cargarEpisodios()
 
 
-
     }
 
     //onResume()¿Para qué sirve? Para re-sincronizar la pantalla cuando el usuario vuelve.
@@ -165,7 +164,11 @@ class EpisodiosFragment : Fragment() {
         // RESTAURACIÓN DE DATOS: Volvemos a pasar la lista completa al adaptador.
         // Esto es vital si el usuario estaba filtrando y sale de la pantalla;
         // al volver, espera ver la lista completa de nuevo.
-        adaptador.setData(listaEpisodios)
+        // pedimos a Firebase que actualice el estado de "visto" de la lista que ya tenemos en memoria.
+        // Si la lista no está vacía, sincronizamos.
+        if (listaEpisodios.isNotEmpty()) {
+            aplicarVistosDesdeFirestore(listaEpisodios)
+        }
     }
 
 
@@ -188,8 +191,7 @@ class EpisodiosFragment : Fragment() {
             cargando = true
 
             // Ejecutamos la llamada a la API de forma asíncrona
-            api.getEpisodios(paginaActual).
-            enqueue(object : Callback<EpisodiosResponse> {
+            api.getEpisodios(paginaActual).enqueue(object : Callback<EpisodiosResponse> {
 
                 // -----------------------------------------
                 // RESPUESTA CORRECTA DEL SERVIDOR
@@ -243,6 +245,7 @@ class EpisodiosFragment : Fragment() {
             })
         }
     }
+
     //  función para aplicar el estado de 'visto' desde Firebase
     private fun aplicarVistosDesdeFirestore(episodios: List<Episodio>) {
 
@@ -280,8 +283,12 @@ class EpisodiosFragment : Fragment() {
                     adaptador.setData(episodios)
                 }
             }
-            .addOnFailureListener {
-                // Es buena práctica manejar errores de conexión aquí.
+            .addOnFailureListener { exception ->
+                Toast.makeText(
+                    requireContext(),
+                    "Error cargando datos: ${exception.message}",
+                    Toast.LENGTH_LONG
+                ).show()
             }
     }
 
