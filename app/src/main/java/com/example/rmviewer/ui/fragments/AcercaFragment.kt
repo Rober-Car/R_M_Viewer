@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.rmviewer.R
 import com.example.rmviewer.databinding.FragmentAcercaBinding
-import com.example.rmviewer.databinding.FragmentDetallesBinding
+
 
 
 class AcercaFragment : Fragment() {
@@ -31,9 +31,8 @@ class AcercaFragment : Fragment() {
 
 		requireActivity().title = getString(R.string.title_acerca)
 
-        binding.btnCerrar.setOnClickListener {
-
-            findNavController().navigate(R.id.episodiosFragment)
+        binding.btnCerrar.setOnClickListener { findNavController().navigate(
+            R.id.episodiosFragment)
 
         }
 	}

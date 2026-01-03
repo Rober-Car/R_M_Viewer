@@ -15,7 +15,6 @@ import com.example.rmviewer.databinding.FragmentEpisodiosBinding
 import com.example.rmviewer.model.Episodio
 import com.example.rmviewer.model.EpisodiosResponse
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import network.ApiService
 import network.RetrofitClient
